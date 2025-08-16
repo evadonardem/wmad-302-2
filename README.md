@@ -9,7 +9,7 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
--Catayao, Paul Khenert A.
+- Catayao, Paul Khenert A.
 
 - Bangonan, Jasmin Joy C.
 - Bugtong, Chinne D.

@@ -10,3 +10,4 @@ SPEAKER: **MEDRANO, Dave H.**
 
 ### PARTICIPANTS:
 
+-ABINON, Rhode John Carl F.

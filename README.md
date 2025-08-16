@@ -9,4 +9,5 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
+-Catayao, Paul Khenert A.
 

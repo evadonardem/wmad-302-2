@@ -10,3 +10,5 @@ SPEAKER: **MEDRANO, Dave H.**
 
 ### PARTICIPANTS:
 
+- SUENO, DEXTER K.
+

@@ -9,5 +9,4 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
-
--Ceasar, Royce D.
+-Galut, Justine Kyle B.

@@ -10,3 +10,4 @@ SPEAKER: **MEDRANO, Dave H.**
 
 ### PARTICIPANTS:
 
+Humiwat, Samuel P.

@@ -10,5 +10,5 @@ SPEAKER: **MEDRANO, Dave H.**
 
 ### PARTICIPANTS:
 
-- Ancheta, Diane Kaye D.
+- Aquisan, Joven Paulo G.
 

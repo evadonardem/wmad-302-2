@@ -9,4 +9,4 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
-
+- Lang-odan, Sherwin L.

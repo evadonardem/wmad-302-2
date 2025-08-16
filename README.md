@@ -10,3 +10,4 @@ SPEAKER: **MEDRANO, Dave H.**
 
 ### PARTICIPANTS:
 
+-Balansi, Rhys Alecksie B.

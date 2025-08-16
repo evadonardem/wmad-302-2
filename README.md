@@ -12,4 +12,5 @@ SPEAKER: **MEDRANO, Dave H.**
 -Catayao, Paul Khenert A.
 
 - Bangonan, Jasmin Joy C.
+- Bugtong, Chinne D.
 

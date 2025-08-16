@@ -9,4 +9,5 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
+- Teligo, Allen Ray D.
 

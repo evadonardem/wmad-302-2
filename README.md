@@ -16,3 +16,5 @@ SPEAKER: **MEDRANO, Dave H.**
 
 - Ancheta, Diane Kaye D.
 
+- SUENO, DEXTER K.
+

@@ -18,3 +18,4 @@ SPEAKER: **MEDRANO, Dave H.**
 
 - SUENO, DEXTER K.
 
+- Cos, Daren

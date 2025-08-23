@@ -18,3 +18,5 @@ SPEAKER: **MEDRANO, Dave H.**
 
 - SUENO, DEXTER K.
 
+- Sawac, Kenjie L.
+

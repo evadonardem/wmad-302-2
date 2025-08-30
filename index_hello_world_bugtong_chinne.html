@@ -1,81 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World!... Bryan Sarino</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-</head>
+    <title>Hello World... Bugtong</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Hello!</a>
-        </div>
-    </nav>
 
-    <div class="container">
-        <!-- Registration Form -->
-        <div class="card bg-transparent" style="width: 18rem;">
+<nav class="navbar fixed-top glass-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Khenert Catayao</a>
+  </div>
+</nav>
+
+    
+    <div class="background"></div>
+    <div class="overlay"></div>
+
+    <canvas id="rain-canvas"></canvas>
+
+    <div class="container text-center">
+        <h1 id="name-placeholder" class="mb-4">Hello World...</h1>
+
+    
+<form class="text-start" id="registration-form">
+    <div class="mb-3">
+        <label for="name" class="form-label text-white">Full Name</label>
+        <input type="text" class="form-control" id="name" placeholder="Enter your name">
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label text-white">Email address</label>
+        <input type="email" class="form-control" id="email" placeholder="name@example.com">
+    </div>
+    <div class="mb-3">
+        <label for="dob" class="form-label text-white">Date of Birth</label>
+        <input type="date" class="form-control" id="dob">
+    </div>
+    <button type="submit" class="btn btn-light w-100">Submit</button>
+</form>
+
+<div id="thank-you-message" class="mt-3 text-center text-white" style="display:none; font-size:1.2rem;">
+    Thank you for registering!
+    we will be in touch soon!
+</div>
+
+    </div>
+
+<div class="row justify-content-center mt-4 g-4">
+    <div class="col-sm-10 col-md-5 col-lg-4">
+        <div class="card glass-card h-100 mx-auto">
             <div class="card-body">
-                <h5 class="card-title">Welcome</h5>
-                <p class="card-text">Fill out our form to register</p>
-                <div class="row">
-                    <div class="col-md-4-sm-12">
-                        <label for="name" class="form-label">What is your name?</label>
-                    </div>
-                    <div class="col-md-8-sm-12">
-                        <input type="text" class="form-control" id="name">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4-sm-12">
-                        <label for="bday" class="form-label">When were you born?</label>
-                    </div>
-                    <div class="col-md-8-sm-12">
-                        <input type="date" class="form-control" id="bday">
-                    </div>
-                </div>
-            </div>
-
-            <button type="button" class="btn btn-primary mb-3" onclick="submitForm()">Submit</button>
-        </div>
-
-        <!-- Thank You Message with Name -->
-        <div id="thankYouMessage" class="card" style="width: 18rem; display: none;">
-            <div class="card-body">
-                <h5 id="thankYouTitle" class="card-title"></h5>
-                <p class="card-text">We'll get in touch</p>
+                <h5 class="card-title">Card 1</h5>
+                <p class="card-text">Bootstrap</p>
+                <a href="#" class="btn btn-outline-light w-100">Learn More</a>
             </div>
         </div>
     </div>
+    <div class="col-sm-10 col-md-5 col-lg-4">
+        <div class="card glass-card h-100 mx-auto">
+            <div class="card-body">
+                <h5 class="card-title">Card 2</h5>
+                <p class="card-text">I AM HIM</p>
+                <a href="#" class="btn btn-outline-light w-100">Learn More</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-10 col-md-5 col-lg-4">
+        <div class="card glass-card h-100 mx-auto">
+            <div class="card-body">
+                <h5 class="card-title">Card 3</h5>
+                <p class="card-text">Syempre pogi ak</p>
+                <a href="#" class="btn btn-outline-light w-100">Learn More</a>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        // Function to handle form submission
-        function submitForm() {
-            var name = document.getElementById("name").value;
-            var bday = document.getElementById("bday").value;
-
-            // Check if name and birthday are filled
-            if (name === "" || bday === "") {
-                alert("Please fill out all fields.");
-                return;
-            }
-
-            // Hide the form and show the thank you message with the user's name
-            document.querySelector(".card.bg-transparent").style.display = "none";
-            document.getElementById("thankYouMessage").style.display = "block";
-
-            // Set the thank you message to include the user's name
-            document.getElementById("thankYouTitle").textContent = `Thank you, ${name}, for registering!`;
-        }
-    </script>
-
+    <!-- Custom JS -->
+    <script src="script.js"></script>
 </body>
-
 </html>
-Footer

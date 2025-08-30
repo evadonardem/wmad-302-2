@@ -1,0 +1,149 @@
+/* General */
+body {
+    background: #f7f8fa;
+    color: #111;
+    font-family: 'Inter', 'SF Pro Text', Arial, sans-serif;
+    letter-spacing: 0.01em;
+}
+
+/* Navbar */
+.navbar {
+    background: #fff !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.navbar-brand {
+    color: #111 !important;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-size: 1.3rem;
+}
+
+/* Main Container */
+main.container {
+    background: #fff;
+    border-radius: 18px;
+    padding: 48px 24px 32px 24px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    margin-bottom: 48px;
+}
+
+/* Heading */
+h1.display-4 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: 0.01em;
+    margin-bottom: 0.5em;
+}
+
+/* Form */
+form.card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #222;
+    margin-bottom: 0.3em;
+}
+
+.form-control {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 1rem;
+    padding: 0.7em 1em;
+    transition: border-color 0.2s;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: #007aff;
+    box-shadow: 0 0 0 2px rgba(0,122,255,0.12);
+    outline: none;
+}
+
+/* Button */
+.btn-primary, .btn-outline-primary {
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: box-shadow 0.18s, background 0.18s, color 0.18s;
+    box-shadow: none;
+    border: none;
+}
+
+.btn-primary {
+    background: #007aff;
+    color: #fff;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: #005ecb;
+    box-shadow: 0 2px 8px rgba(0,122,255,0.10);
+}
+
+.btn-outline-primary {
+    background: #fff;
+    color: #007aff;
+    border: 1px solid #cfe2ff;
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background: #eaf4ff;
+    color: #005ecb;
+    box-shadow: 0 2px 8px rgba(0,122,255,0.08);
+}
+
+/* Thank You Message */
+#thankYouMsg {
+    border-radius: 10px;
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+    padding: 0.9em 1.2em;
+}
+
+/* Cards */
+.card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+    border: 1px solid #e5e7eb;
+    padding: 0;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 0.7em;
+    letter-spacing: 0.01em;
+}
+
+.card-text {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 1.5em;
+    letter-spacing: 0.01em;
+}
+
+.card-body {
+    padding: 2em 1.5em 1.5em 1.5em;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    main.container {
+        padding: 24px 6px 16px 6px;
+    }
+    .card-body {
+        padding: 1.2em 0.7em 1em 0.7em;
+    }
+    h1.display-4 {
+        font-size: 2rem;
+    }
+}

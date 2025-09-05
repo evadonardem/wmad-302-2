@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hello World!... Dexter Sueno</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-image: url("https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTZrdjdwYTd2dWtuM21rMGozZTJoN2Ywa3FuMTRwODAyaWRvMjY0diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/zvtucC9sZ3bGM/giphy.gif");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(50, 50, 50, 0.6));
+            backdrop-filter: blur(6px);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+        
+        .gradient-success {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.9), rgba(0, 200, 83, 0.7));
+            backdrop-filter: blur(6px);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+        
+        .greeting {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 5px #00f7ff, 0 0 10px #00f7ff, 0 0 20px #00f7ff, 0 0 40px #00e1ff, 0 0 80px #00bfff;
+            animation: neonPulse 2s infinite alternate;
+        }
+        
+        @keyframes neonPulse {
+            from {
+                text-shadow: 0 0 5px #00f7ff, 0 0 10px #00f7ff, 0 0 20px #00f7ff, 0 0 40px #00e1ff, 0 0 80px #00bfff;
+            }
+            to {
+                text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 80px #ff33cc, 0 0 120px #ff66ff;
+            }
+        }
+        
+        .neon-thankyou {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 40px #00ff00, 0 0 80px #00ff66;
+            animation: greenPulse 2s infinite alternate;
+        }
+        
+        @keyframes greenPulse {
+            from {
+                text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 40px #00ff00, 0 0 80px #00ff66;
+            }
+            to {
+                text-shadow: 0 0 10px #b6ff00, 0 0 20px #b6ff00, 0 0 40px #99ff33, 0 0 80px #66ff99, 0 0 120px #33ff66;
+            }
+        }
+        
+        .wave {
+            display: inline-block;
+            animation: wave-animation 2s infinite;
+            transform-origin: 70% 70%;
+        }
+        
+        @keyframes wave-animation {
+            0% {
+                transform: rotate(0deg);
+            }
+            15% {
+                transform: rotate(20deg);
+            }
+            30% {
+                transform: rotate(-10deg);
+            }
+            45% {
+                transform: rotate(20deg);
+            }
+            60% {
+                transform: rotate(-5deg);
+            }
+            75% {
+                transform: rotate(10deg);
+            }
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .btn-primary:hover {
+            background-color: #00f7ff;
+            color: #000;
+            box-shadow: 0 0 5px #00f7ff, 0 0 15px #00f7ff, 0 0 30px #00f7ff, 0 0 60px #00e1ff;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="greeting"><span class="wave">👋</span> Hello, User!</div>
+
+
+    <div>
+
+        <div class="card text-center gradient-card mb-3" id="registerCard" style="width: 22rem;">
+            <div class="card-body">
+                <h5 class="card-title">Is this you?</h5>
+                <p class="card-text">Fill out our form to register:</p>
+
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">By what name are you known?</label>
+                    <input type="text" class="form-control text-center" id="name" />
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="bday" class="form-label">What’s your birth date?</label>
+                    <input type="date" class="form-control text-center" id="bday" />
+                </div>
+
+
+                <button class="btn btn-primary w-100" id="submitBtn">Submit</button>
+            </div>
+        </div>
+
+
+
+        <div class="card text-center gradient-success" id="thankYouCard" style="width: 22rem; display: none;">
+            <div class="card-body">
+                <h5 class="card-title neon-thankyou">Thank you for registering🫡</h5>
+                <p class="card-text neon-thankyou" id="thankYouMessage">We'll get in touch🤝</p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById("submitBtn").addEventListener("click", function() {
+            const name = document.getElementById("name").value;
+            const bday = document.getElementById("bday").value;
+
+
+            if (!name || !bday) {
+                alert("Please fill out both fields before submitting!");
+            } else {
+                document.getElementById("registerCard").style.display = "none";
+                document.getElementById("thankYouCard").style.display = "block";
+                document.getElementById("thankYouMessage").textContent = `We'll get in touch, ${name}🤝`;
+            }
+        });
+    </script>
+</body>
+
+</html>

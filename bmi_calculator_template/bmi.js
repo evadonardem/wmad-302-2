@@ -1,4 +1,5 @@
 // Create your BMI calculator here using JavaScript
+// Create your BMI calculator here using JavaScript
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('bmiForm');

@@ -25,6 +25,42 @@
 </head>
 <body>
     <!-- Do your BMI page here using Bootstrap -->
+     <div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg rounded-4">
+        <div class="card-header text-center bg-primary text-white">
+          <h3><i class="fa-solid fa-heartbeat"></i> BMI Calculator</h3>
+        </div>
+        <div class="card-body">
+          <form id="bmiForm">
+            <!-- Height -->
+            <div class="mb-3">
+              <label for="height" class="form-label">Height (cm)</label>
+              <input type="number" class="form-control" id="height" placeholder="Enter your height" required>
+            </div>
+            <!-- Weight -->
+            <div class="mb-3">
+              <label for="weight" class="form-label">Weight (kg)</label>
+              <input type="number" class="form-control" id="weight" placeholder="Enter your weight" required>
+            </div>
+            <!-- Button -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">
+                <i class="fa-solid fa-calculator"></i> Calculate BMI
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer text-center">
+          <h5 id="result" class="text-primary"></h5>
+          <p id="category" class="fw-bold"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
     <script src="scripts/bmi.js"></script>
 </body>
 </html>

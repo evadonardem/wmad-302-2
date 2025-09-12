@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My BMI Calculator (LastName, FirstName)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"
+        integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css"
+        integrity="sha512-2bBQCjcnw658Lho4nlXJcc6WkV/UxpE/sAokbXPxQNGqmNdQrWqtw26Ns9kFF/yG792pKR1Sx8/Y1Lf1XN4GKA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+        }
+       
+    </style>
+</head>
+
+<body class="d-flex align-items-center justify-content-center">
+
+
+    <div class="card text-center shadow-lg p-3 mb-5 bg-white rounded" style="max-width: 500px;">
+        <div class="card-header">
+            <H1 style="font-weight: 600; color: rgb(72, 4, 35);">BODY MASS INDEX CALCULATOR
+                <i class="fa-solid fa-hand-holding-heart fa-lg" style="color: #611919;"></i>
+            </H1>
+
+        </div>
+        <div class="card-body">
+
+            <div class="input-group mb-3" style="border-radius: 8px;">
+                <div class="col">
+                    <label for="inputHeight" class="col-form-label" style="font-weight: 1000;">Height</label>
+                    <i class="fa-solid fa-ruler-vertical fa-beat"></i>
+
+                </div>
+                <div class="col">
+                    <input type="number" id="Hayt" class="form-control" placeholder="meter">
+                </div>
+
+                <div class="input-group mb-3" style="border-radius: 8px;">
+                    <div class="col">
+                        <label for="inputWeight" class="col-form-label" style="font-weight: 1000;">Weight</label>
+                        <i class="fa-solid fa-weight-scale fa-beat"></i>
+                    </div>
+                    <div class="col">
+                        <input type="number" id="Kilogram" class="form-control" placeholder="kilogram">
+                    </div>
+                </div>
+
+                <div class="CardButton" style="width: 400rem;">
+                    <button type="button" id="calculateBtn" class="btn btn-dark w-100">Calculate</button>
+                </div>
+            
+            </div>
+
+            <div id="bmiResult" class="mt-4 p-3 border rounded d-none text-center justify-content-center">
+                <h3 id="bmiValue" class="fw-bold"></h3>
+                <h5 id="bmiCategory" class="mb-0 fw-medium"></h5>
+            </div>
+
+        </div>
+        <!-- Do your BMI page here using Bootstrap -->
+        <script src="scripts/bmi.js"></script>
+</body>
+
+</html>

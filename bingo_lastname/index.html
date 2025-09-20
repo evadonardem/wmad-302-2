@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My BINGO Game (LastName, FirstName)</title>
+    <title>My BINGO Game (Galut, Justine Kyle)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"
         integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -17,6 +17,54 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Add your styles here -->
+    <style>
+        /* Add this to style your Bingo cards */
+        .table td {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+        }
+
+        .table td.bg-danger {
+            background-color: #dc3545; /* Red background for marked cells */
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .table tr:hover {
+            background-color: #f1f1f1; /* Light gray background on hover */
+        }
+
+        .table tfoot {
+            font-weight: bold;
+            text-align: center;
+            background-color: #28a745; /* Green background for lucky card footer */
+            color: #fff;
+        }
+
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6; /* Light gray borders */
+        }
+
+        .table-bordered {
+            margin-bottom: 1rem; /* Space between tables */
+        }
+
+        /* Optional: Adjust button styles */
+        .btn-group {
+            width: 100%;
+        }
+
+        .btn-group .btn {
+            width: 48%; /* Make buttons a bit smaller */
+        }
+    </style>
 </head>
 
 <body>
@@ -60,4 +108,4 @@
     <script src="scripts/bingo.js"></script>
 </body>
 
-</html>row
+</html>

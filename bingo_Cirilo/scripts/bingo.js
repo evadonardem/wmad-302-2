@@ -337,7 +337,7 @@ resetBtn.addEventListener('click', () => {
     // Reset game state
     nabola = [];
     tambiolo.reset();
-    cards = generateCards(Number(numberOfCardsInput.value) || 1);
+    cards = [];
     drawBtn.removeAttribute('disabled');
     render();
 });

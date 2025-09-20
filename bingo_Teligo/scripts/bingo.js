@@ -24,6 +24,22 @@ class BingoMachine {
          *     G - 46 to 60
          *     O - 61 to 75
          */
+        const letters = ['B', 'I', 'N', 'G', 'O'];
+        const ranges = [
+            _.range(1, 16),   // B
+            _.range(16, 31),  // I
+            _.range(31, 46),  // N
+            _.range(46, 61),  // G
+            _.range(61, 76),  // O
+        ];
+
+        for (let i = 0; i < 5; i++) {
+            const letter = letters[i];
+            const range = ranges[i];
+            range.forEach((number) => {
+                this.#balls.push(new BingoBall(letter, number));
+            });
+        }
     }
 
     isEmpty() {
@@ -73,16 +89,12 @@ class BingoCard {
             [4, _.sampleSize(BingoCard.#cellValueLookup.get('O'), 5)],
         ]);
 
-        /**
-         * Complete this loop condition block to complete
-         * random BINGO card generator.
-         */
         this.#cells = [];
         for (let i = 0; i < 5; i++) {
             this.#cells[i] = [];
             for (let j = 0; j < 5; j++) {
                 this.#cells[i].push({
-                    value: "&nbsp;",
+                    value: randomCellValues.get(i)[j] || '&nbsp;',
                     isMarked: false
                 });
             }
@@ -145,32 +157,63 @@ const luckyCardsCellMatches = luckyCards.map((rows) => {
     return cellMatches;
 });
 
-
 let cards = [];
 let nabola = [];
 const tambiolo = new BingoMachine();
 
 function generateCards(count = 1) {
     let newCards = [];
-    // generate cards using loops
     for (let i = 0; i < count; i++) {
         newCards.push(new BingoCard());
     }
-
     return newCards;
 }
 
 function checkLuckyCards() {
-    /**
-     * Complete this function to check if any
-     * of the cards matches the lucky cards templates.
-     */
+    let luckyCardFound = false;
+
+    // Loop through all cards to check for lucky cards
+    cards.forEach((card) => {
+        const rows = card.rows;
+
+        // Check each lucky card template
+        luckyCardsCellMatches.forEach((template) => {
+            // Check if the current card matches any lucky card template
+            const matchedCells = template.every((position) => {
+                const [rowIdx, colIdx] = position.split('-').map(Number);
+                return rows[rowIdx][colIdx].isMarked;
+            });
+
+            if (matchedCells) {
+                // If a match is found, mark this card as lucky
+                if (!card.luckyCard) { // Prevent marking a card more than once
+                    card.luckyCard = true;
+                    luckyCardFound = true;
+                }
+            }
+        });
+    });
+
+    // If any lucky cards are found, we proceed to the end of the game
+    if (luckyCardFound) {
+        endGame();
+    }
+}
+
+function endGame() {
+    alert("Game Over! One or more cards have matched the lucky card pattern!");
+
+    // Disable the draw/roll buttons to stop further actions
+    document.getElementById('draw').disabled = true;
+    document.getElementById('roll').disabled = true;
+
+    render();
 }
 
 function render() {
     const cardsPlaceholderElem = document.getElementById('cardsPlaceholder');
     const luckyCardsPlaceholderElem = document.getElementById('luckyCardsPlaceholder');
-    
+
     cardsPlaceholderElem.innerHTML = `<div class="row">
         ${cards.map((card) => {
             const rows = card.rows;
@@ -224,41 +267,34 @@ function render() {
             </tbody>
         </table>`;
     }).join('');
-    
+
     document.getElementById('drawnBallsPlaceholder').innerHTML = nabola.map((bola) => `<span class="badge bg-primary mb-1">${bola.letter}<br>${bola.number}</span>`).join(' ');
 }
 
-/**
- * Events
- */
-const numberOfCardsInput = document.getElementById('numberOfCards');
 const rollBtn = document.getElementById('roll');
 const drawBtn = document.getElementById('draw');
 
-numberOfCardsInput.addEventListener('change', (event) => {
-    const numberOfCards = event.target.value;
-    cards  = generateCards(numberOfCards);
-    nabola = [];
-    tambiolo.reset();
-    drawBtn.removeAttribute('disabled');
-    render();
-});
+drawBtn.addEventListener('click', () => {
+    const drawnBall = tambiolo.draw();
 
+    if (drawnBall) {
+        nabola.push(drawnBall);
+
+        cards.forEach((card) => {
+            card.rows.forEach((row) => {
+                row.forEach((cell) => {
+                    if (cell.value === drawnBall.number) {
+                        cell.isMarked = true;
+                    }
+                });
+            });
+        });
+
+        checkLuckyCards();
+        render();
+    }
+});
 
 rollBtn.addEventListener('click', () => {
     tambiolo.roll();
 });
-
-drawBtn.addEventListener('click', () => {
-    alert('Complete this function draw a ball from tambiolo.');
-    /**
-     * Steps to complete
-     * 1. draw a ball from tambiolo
-     * 2. add drawn ball to nabola
-     * 3. check all cards with cells is marked
-     * 4. check lucky cards BINGO (if any)
-     * 5. render the page
-     */
-});
-
-render();

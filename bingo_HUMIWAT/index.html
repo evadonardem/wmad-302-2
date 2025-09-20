@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My BINGO Game (LastName, FirstName)</title>
+    <title>My BINGO Game (Humiwat, Samuel)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"
         integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -17,6 +17,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            .winner-card {
+  border: 4px solid #28a745 !important;
+  box-shadow: 0 0 20px rgba(40, 167, 69, 0.8);
+  animation: winnerGlow 1s infinite alternate;
+}
+
+@keyframes winnerGlow {
+  from { box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); }
+  to { box-shadow: 0 0 25px rgba(40, 167, 69, 1); }
+}
+        </style>
 </head>
 
 <body>
@@ -60,4 +72,4 @@
     <script src="scripts/bingo.js"></script>
 </body>
 
-</html>row
+</html>

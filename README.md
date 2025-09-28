@@ -20,5 +20,6 @@ SPEAKER: **MEDRANO, Dave H.**
 - GABOL, Joshkane Van K.
 - HUMIWAT, Samuel P.
 - LANG-ODAN, Sherwin L.
+- SAWAC, Kenjie L.
 - SUENO, DEXTER K.
 - TELIGO, Allen Ray D.

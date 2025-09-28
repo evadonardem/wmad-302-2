@@ -9,5 +9,11 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
-
--Balansi, Rhys Alecksie B.
+- ANCHETA, Diane Kaye D.
+- BANGONAN, Jasmin Joy C.
+- BALANSI, Rhys Alecksie B.
+- BUGTONG, Chinne D.
+- CATAYAO, Paul Khenert A.
+- CIRILO, Daryll Daniel T.
+- SUENO, DEXTER K.
+- TELIGO, Allen Ray D.

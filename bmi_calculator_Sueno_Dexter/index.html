@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My BMI Calculator (Sueno, Dexter)</title>
+
+  <!-- Bootstrap -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css"
+    crossorigin="anonymous" />
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    crossorigin="anonymous" />
+</head>
+<body class="bg-light">
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+
+        <!-- Card -->
+        <div class="card shadow-lg border-0 rounded-4">
+          <div class="card-header bg-primary text-white text-center rounded-top-4">
+            <h3><i class="fas fa-calculator"></i> BMI Calculator</h3>
+          </div>
+          <div class="card-body p-4">
+
+            <!-- Form -->
+            <form id="bmiForm">
+              <div class="mb-3">
+                <label for="weight" class="form-label">
+                  <i class="fa-solid fa-weight-scale"></i> Weight (kg)
+                </label>
+                <input type="number" class="form-control" id="weight" placeholder="Enter your weight in kg" step="0.1" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="height" class="form-label">
+                  <i class="fa-solid fa-text-height"></i> Height (m)
+                </label>
+                <input type="number" class="form-control" id="height" placeholder="Enter your height in meters (e.g., 1.75)" step="0.01" required>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-play"></i> Calculate BMI
+              </button>
+            </form>
+
+            <!-- Result -->
+            <div class="mt-4 text-center">
+              <h4 id="bmiResult" class="fw-bold"></h4>
+              <p id="bmiCategory" class="fs-5"></p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+  <script src="scripts/bmi.js"></script>
+</body>
+</html>

@@ -11,6 +11,7 @@ SPEAKER: **MEDRANO, Dave H.**
 ### PARTICIPANTS:
 - ANCHETA, Diane Kaye D.
 - BANGONAN, Jasmin Joy C.
+- BALANSI, Rhys Alecksie B.
 - BUGTONG, Chinne D.
 - CATAYAO, Paul Khenert A.
 - CIRILO, Daryll Daniel T.

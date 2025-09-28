@@ -17,5 +17,6 @@ SPEAKER: **MEDRANO, Dave H.**
 - CATAYAO, Paul Khenert A.
 - CIRILO, Daryll Daniel T.
 - GABOL, Joshkane Van K.
+- LANG-ODAN, Sherwin L.
 - SUENO, DEXTER K.
 - TELIGO, Allen Ray D.

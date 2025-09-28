@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My BMI Calculator (LastName, FirstName)</title>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"
+        integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css"
+        integrity="sha512-2bBQCjcnw658Lho4nlXJcc6WkV/UxpE/sAokbXPxQNGqmNdQrWqtw26Ns9kFF/yG792pKR1Sx8/Y1Lf1XN4GKA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+    
+</head>
+<body>
+    <body class= "bg-dark text-white">
+
+     <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 350px;">
+      <h1 class="h4 text-center mb-3">BMI Calculator (Metric)</h1>
+
+      <div class="mb-3">
+        <label for="weight" class="form-label">Weight (kg):</label>
+        <input type="number" id="weight" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="height" class="form-label">Height (cm):</label>
+        <input type="number" id="height" class="form-control">
+      </div>
+
+      <button class="btn btn-primary w-100 mb-3" onclick="calculateBMI()">Calculate</button>
+      <p id="result" class="text-center fw-bold"></p>
+    </div>
+  </div>
+
+    <!-- Do your BMI page here using Bootstrap -->
+    <script src="scripts/bmi.js"></script>
+</body>
+</html>

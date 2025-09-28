@@ -9,13 +9,10 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
-- Catayao, Paul Khenert A.
-
-- Bangonan, Jasmin Joy C.
-- Bugtong, Chinne D.
-
-- Ancheta, Diane Kaye D.
-
-- SUENO, DEXTER K.
-
+- ANCHETA, Diane Kaye D.
+- BANGONAN, Jasmin Joy C.
+- BUGTONG, Chinne D.
+- CATAYAO, Paul Khenert A.
 - CIRILO, Daryll Daniel T.
+- SUENO, DEXTER K.
+- TELIGO, Allen Ray D.

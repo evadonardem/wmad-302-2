@@ -16,6 +16,7 @@ SPEAKER: **MEDRANO, Dave H.**
 - BUGTONG, Chinne D.
 - CATAYAO, Paul Khenert A.
 - CIRILO, Daryll Daniel T.
+- COS, Daren
 - GABOL, Joshkane Van K.
 - LANG-ODAN, Sherwin L.
 - SUENO, DEXTER K.

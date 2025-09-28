@@ -9,4 +9,14 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
-- Lang-odan, Sherwin L.
+- ABINON, Rhode John Carl F.
+- ANCHETA, Diane Kaye D.
+- BANGONAN, Jasmin Joy C.
+- BALANSI, Rhys Alecksie B.
+- BUGTONG, Chinne D.
+- CATAYAO, Paul Khenert A.
+- CIRILO, Daryll Daniel T.
+- GABOL, Joshkane Van K.
+- LANG-ODAN, Sherwin L.
+- SUENO, DEXTER K.
+- TELIGO, Allen Ray D.

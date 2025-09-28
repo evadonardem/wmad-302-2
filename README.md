@@ -18,6 +18,7 @@ SPEAKER: **MEDRANO, Dave H.**
 - CIRILO, Daryll Daniel T.
 - COS, Daren
 - GABOL, Joshkane Van K.
+- HUMIWAT, Samuel P.
 - LANG-ODAN, Sherwin L.
 - SUENO, DEXTER K.
 - TELIGO, Allen Ray D.

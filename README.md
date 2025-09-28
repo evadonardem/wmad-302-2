@@ -9,5 +9,12 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
-
--ABINON, Rhode John Carl F.
+- ABINON, Rhode John Carl F.
+- ANCHETA, Diane Kaye D.
+- BANGONAN, Jasmin Joy C.
+- BALANSI, Rhys Alecksie B.
+- BUGTONG, Chinne D.
+- CATAYAO, Paul Khenert A.
+- CIRILO, Daryll Daniel T.
+- SUENO, DEXTER K.
+- TELIGO, Allen Ray D.

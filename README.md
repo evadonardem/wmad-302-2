@@ -12,17 +12,29 @@ SPEAKER: **MEDRANO, Dave H.**
 - ABINON, Rhode John Carl F.
 - ANCHETA, Diane Kaye D.
 - AQUISAN, Joven Paulo G.
+- BALUBAR, Warren
 - BANGONAN, Jasmin Joy C.
-- BALANSI, Rhys Alecksie B.
+- BANKIN, Ivan
+- BETET, Jone
 - BUGTONG, Chinne D.
+- CALGO, John Well
+- CANUTO, Cheche
 - CATAYAO, Paul Khenert A.
-- CEASAR, Royce D.
+- CAYETANO, Keneth
+- CIANO, Lee Van
 - CIRILO, Daryll Daniel T.
 - COS, Daren
 - GABOL, Joshkane Van K.
 - GALUT, Justine Kyle B.
 - HUMIWAT, Samuel P.
 - LANG-ODAN, Sherwin L.
+- LARUAN, Christian
+- LUMANG-AY, Ruel
+- MOCAY, Homer
+- ORAS, Molly Grail
+- PABLO, Joerel
+- PALANGCHAO, Allyson
+- SARINO, Bryan
 - SAWAC, Kenjie L.
 - SUENO, DEXTER K.
 - TELIGO, Allen Ray D.

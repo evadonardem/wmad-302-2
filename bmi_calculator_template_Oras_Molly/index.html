@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My BMI Calculator (Oras, Molly)</title>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    /* Optional: style input group icons background */
+    .input-group-text {
+      background-color: #e9ecef;
+    }
+  </style>
+</head>
+<body>
+  <div class="container my-5">
+    <h1 class="text-center mb-4">
+      <i class="fas fa-heartbeat text-danger me-2"></i>BMI Calculator (Oras, Molly)
+    </h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <form id="bmiForm" class="p-4 border rounded shadow-sm bg-light" novalidate>
+          <div class="mb-3">
+            <label for="weight" class="form-label">Weight (kg)</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-weight-scale"></i></span>
+              <input
+                type="number"
+                class="form-control"
+                id="weight"
+                placeholder="Enter your weight in kilograms"
+                min="1"
+                step="any"
+                required
+                autocomplete="off"
+              />
+            </div>
+            <div class="invalid-feedback">Please enter a valid weight greater than 0.</div>
+          </div>
+          <div class="mb-3">
+            <label for="height" class="form-label">Height (cm)</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
+              <input
+                type="number"
+                class="form-control"
+                id="height"
+                placeholder="Enter your height in centimeters"
+                min="1"
+                step="any"
+                required
+                autocomplete="off"
+              />
+            </div>
+            <div class="invalid-feedback">Please enter a valid height greater than 0.</div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="fas fa-calculator me-2"></i>Calculate BMI
+          </button>
+        </form>
+        <div id="result" class="mt-4 p-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"
+  ></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const weightInput = document.getElementById('weight');
+      const heightInput = document.getElementById('height');
+      const resultDiv = document.getElementById('result');
+      const form = document.getElementById('bmiForm');
+
+      function getCategoryAndAlertClass(bmi) {
+        if (bmi < 18.5) return { category: 'Underweight', alertClass: 'alert-info', icon: 'fa-arrow-down' };
+        if (bmi < 25) return { category: 'Normal weight', alertClass: 'alert-success', icon: 'fa-check-circle' };
+        if (bmi < 30) return { category: 'Overweight', alertClass: 'alert-warning', icon: 'fa-exclamation-triangle' };
+        return { category: 'Obesity', alertClass: 'alert-danger', icon: 'fa-skull-crossbones' };
+      }
+
+      function validateInput(input) {
+        const val = parseFloat(input.value);
+        if (isNaN(val) || val <= 0) {
+          input.classList.add('is-invalid');
+          return null;
+        } else {
+          input.classList.remove('is-invalid');
+          return val;
+        }
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const weight = validateInput(weightInput);
+        const heightCm = validateInput(heightInput);
+
+        if (weight === null || heightCm === null) {
+          resultDiv.innerHTML = '';
+          return;
+        }
+
+        const heightM = heightCm / 100;
+        const bmi = weight / (heightM * heightM);
+        const bmiRounded = bmi.toFixed(2);
+
+        const { category, alertClass, icon } = getCategoryAndAlertClass(bmi);
+
+        resultDiv.innerHTML = `
+          <div class="alert ${alertClass} alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="fas ${icon} fa-2x me-3"></i>
+            <div>
+              <h4 class="alert-heading mb-1">Your BMI is ${bmiRounded}</h4>
+              <p class="mb-0">Category: <strong>${category}</strong></p>
+            </div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>

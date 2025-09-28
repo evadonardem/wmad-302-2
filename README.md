@@ -20,6 +20,7 @@ SPEAKER: **MEDRANO, Dave H.**
 - CIRILO, Daryll Daniel T.
 - COS, Daren
 - GABOL, Joshkane Van K.
+- GALUT, Justine Kyle B.
 - HUMIWAT, Samuel P.
 - LANG-ODAN, Sherwin L.
 - SAWAC, Kenjie L.

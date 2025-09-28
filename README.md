@@ -9,6 +9,7 @@ SPEAKER: **MEDRANO, Dave H.**
 ---
 
 ### PARTICIPANTS:
+- ABINON, Rhode John Carl F.
 - ANCHETA, Diane Kaye D.
 - BANGONAN, Jasmin Joy C.
 - BALANSI, Rhys Alecksie B.

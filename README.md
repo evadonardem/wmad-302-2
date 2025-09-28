@@ -15,6 +15,7 @@ SPEAKER: **MEDRANO, Dave H.**
 - BALANSI, Rhys Alecksie B.
 - BUGTONG, Chinne D.
 - CATAYAO, Paul Khenert A.
+- CEASAR, Royce D.
 - CIRILO, Daryll Daniel T.
 - COS, Daren
 - GABOL, Joshkane Van K.

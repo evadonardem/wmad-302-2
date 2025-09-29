@@ -1,0 +1,130 @@
+/* === Pixel Arcade Theme with Glow === */
+
+/* Pixel font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    background: #121212;
+    font-family: 'Press Start 2P', cursive;
+    color: #f8f8f2;
+    padding: 20px;
+}
+
+/* Bingo Cards */
+.table {
+    border: 3px solid #2c2c2c !important;
+    border-radius: 0;
+    background: #1f1f1f;
+    box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 18px rgba(62, 201, 167, 0.6);
+}
+
+/* Header (B I N G O) */
+.table-primary {
+    background: #3ec9a7 !important; /* teal */
+    color: #111 !important;
+    border-bottom: 3px solid #111 !important;
+    font-size: 0.8rem;
+    text-shadow: 0 0 4px #3ec9a7, 0 0 8px #3ec9a7;
+}
+
+/* Bingo Cells */
+td {
+    padding: 12px;
+    border: 2px solid #444 !important;
+    background: #222;
+    color: #f8f8f2;
+    transition: background 0.2s, box-shadow 0.3s;
+}
+
+/* Marked cells */
+td.bg-danger {
+    background: #e74c3c !important;
+    color: #fff !important;
+    font-weight: bold;
+    box-shadow: 0 0 10px #e74c3c, 0 0 20px #e74c3c;
+}
+
+/* FREE space */
+td.free-space {
+    background: #f1c40f !important;
+    color: #111 !important;
+    font-weight: bold;
+    box-shadow: 0 0 8px #f1c40f, 0 0 15px #f1c40f;
+}
+
+/* Lucky Card Footer */
+tfoot.table-success {
+    background: #3498db !important;
+    color: #111 !important;
+    border-top: 3px solid #000;
+    text-shadow: 0 0 4px #3498db, 0 0 10px #3498db;
+}
+
+/* Winner Banner */
+.winner-banner {
+    background: #8e44ad;
+    color: #fff;
+    border: 3px solid #000;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    box-shadow: 0 0 20px #8e44ad, 0 0 40px #9b59b6;
+    animation: winnerGlow 1s infinite alternate;
+}
+
+/* Winner Cells (big emphasis) */
+td.winner-cell {
+    background: #2ecc71 !important; /* green win */
+    color: #111 !important;
+    font-weight: bold;
+    box-shadow: 0 0 15px #2ecc71, 0 0 30px #2ecc71;
+    animation: winnerPulse 1s infinite;
+}
+
+/* Balls */
+.badge {
+    font-size: 0.75rem;
+    padding: 10px 6px;
+    border: 2px solid #000;
+    border-radius: 0;
+    background: #3498db !important;
+    color: #fff;
+    box-shadow: 0 0 8px #3498db, 0 0 15px #3498db;
+}
+
+/* Buttons */
+button {
+    border-radius: 0 !important;
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 0.65rem !important;
+    text-transform: uppercase;
+    border: 2px solid #000 !important;
+    background: #8e44ad !important;
+    color: #fff !important;
+    box-shadow: 0 0 8px #8e44ad, 0 0 12px #8e44ad;
+    transition: transform 0.1s ease-in-out, background 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    background: #9b59b6 !important;
+    box-shadow: 0 0 12px #9b59b6, 0 0 18px #9b59b6;
+}
+
+/* Animations */
+@keyframes winnerGlow {
+    0% { box-shadow: 0 0 15px #8e44ad, 0 0 30px #9b59b6; }
+    100% { box-shadow: 0 0 25px #9b59b6, 0 0 50px #d9b3e6; }
+}
+
+@keyframes winnerPulse {
+    0% { transform: scale(1); box-shadow: 0 0 12px #2ecc71, 0 0 25px #27ae60; }
+    100% { transform: scale(1.1); box-shadow: 0 0 20px #27ae60, 0 0 40px #2ecc71; }
+}

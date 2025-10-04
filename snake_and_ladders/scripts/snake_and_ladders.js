@@ -23,6 +23,20 @@ class Die {
      */
 }
 
+class Player {
+    /**
+     * Complete the Player class to meet the following requirements:
+     * 
+     * 1. The constructor should accept a single parameter, name, which represents the player's name.
+     * 2. The class should have a property named color that is initialized to a random color from the following array: ['red', 'blue', 'green', 'yellow'].
+     * 2. The class should have a property named position that is initialized to 0.
+     * 3. The class should have a method named move that accepts a single parameter, steps, and updates the player's position by adding the steps to the current position.
+     * 
+     * Example usage:
+     * const player = new Player('Alice');
+     */
+}
+
 
 const diceElement = document.getElementById('dicePlaceholder');
 const rollDiceButton = document.getElementById('rollDiceButton');

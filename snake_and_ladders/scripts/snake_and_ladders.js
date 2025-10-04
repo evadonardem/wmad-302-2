@@ -1,5 +1,4 @@
 class Die {
-
     static #sidesToIcon = {
         1: 'dice-one',
         2: 'dice-two',
@@ -9,47 +8,125 @@ class Die {
         6: 'dice-six', 
     };
 
-    /**
-     * Complete the Die class to meet the following requirements:
-     * 
-     * 1. The constructor should accept a single parameter, sides, which represents the number of sides on the die (by default 6).
-     * 2. The class should have a method named roll that returns a random integer between 1 and the number of sides (inclusive).
-     * 3. The class should hava a method getting icon that returns a string representing a die icon using font-awesome.
-     *    - For example, if the die has 6 sides, the method should return '<i class="fa fa-dice-six"></i>'.
-     *    - If the die has 4 sides, it should return '<i class="fa fa-dice-four"></i>', and so on.
-     * 
-     * Example usage:
-     * const die = new Die(6);
-     */
+    constructor(sides = 6) {
+        this.sides = sides;
+    }
+
+    roll() {
+        return Math.floor(Math.random() * this.sides) + 1;
+    }
+
+    static iconForValue(value) {
+        const iconName = Die.#sidesToIcon[value] || 'dice';
+        return `<i class="fa fa-2xl fa-${iconName}"></i>`;
+    }
 }
 
 class Player {
-    /**
-     * Complete the Player class to meet the following requirements:
-     * 
-     * 1. The constructor should accept a single parameter, name, which represents the player's name.
-     * 2. The class should have a property named color that is initialized to a random color from the following array: ['red', 'blue', 'green', 'yellow'].
-     * 2. The class should have a property named position that is initialized to 0.
-     * 3. The class should have a method named move that accepts a single parameter, steps, and updates the player's position by adding the steps to the current position.
-     * 
-     * Example usage:
-     * const player = new Player('Alice');
-     */
+    static colors = ['red', 'blue', 'green', 'yellow'];
+    constructor(name) {
+        this.name = name;
+        this.color = Player.colors[Math.floor(Math.random() * Player.colors.length)];
+        this.position = 1; // Start at 1
+    }
+    move(steps) {
+        this.position += steps;
+        if (this.position > 100) this.position = 100;
+    }
+    setPosition(pos) {
+        this.position = pos;
+    }
 }
 
+// Snakes and ladders mapping: start => end
+const snakes = {
+    16: 6,
+    47: 26,
+    49: 11,
+    56: 53,
+    62: 19,
+    64: 60,
+    87: 24,
+    93: 73,
+    95: 75,
+    98: 78
+};
+const ladders = {
+    1: 38,
+    4: 14,
+    9: 31,
+    21: 42,
+    28: 84,
+    36: 44,
+    51: 67,
+    71: 91,
+    80: 100
+};
 
+function getCoords(square) {
+    // 10x10 board, bottom-left is 1, top-left is 91, bottom-right is 10, top-right is 100
+    const size = 74; // 740px / 10 squares
+    let row = Math.floor((square - 1) / 10);
+    let col = (square - 1) % 10;
+    if (row % 2 === 1) col = 9 - col; // reverse direction every other row
+    let x = col * size;
+    let y = 740 - size - row * size;
+    return { x, y };
+}
+
+// DOM elements
 const diceElement = document.getElementById('dicePlaceholder');
 const rollDiceButton = document.getElementById('rollDiceButton');
+const playerToken = document.getElementById('playerToken');
+const statusDiv = document.getElementById('status');
+
 const dice = new Die(6);
+const player = new Player('You');
+
+function updatePlayerToken() {
+    const coords = getCoords(player.position);
+    playerToken.style.left = `${coords.x + 17}px`;
+    playerToken.style.top = `${coords.y + 10}px`;
+}
+
+function updateStatus(msg) {
+    statusDiv.innerHTML = msg;
+}
 
 rollDiceButton.addEventListener('click', () => {
-    /**
-     * Complete the event listener to meet the following requirements:
-     * render the icon of the die in the diceElement when the button is clicked.
-     * Use the getIcon method of the Die class to get the appropriate icon based on the number of sides.
-     * For example, if the die has 6 sides, it should render '<i class="fa fa-dice-six"></i>'.
-     */
-    const icon = 'dice-five';
-    diceElement.innerHTML = `<i class="fa fa-2xl fa-${icon}"></i>`;
+    if (player.position === 100) {
+        updateStatus("🎉 You already won! Refresh to play again.");
+        return;
+    }
+    const result = dice.roll();
+    diceElement.innerHTML = Die.iconForValue(result);
+
+    let oldPos = player.position;
+    player.move(result);
+
+    let msg = `You rolled a <b>${result}</b> and moved from <b>${oldPos}</b> to <b>${player.position}</b>.`;
+
+    // Check for snakes or ladders
+    if (ladders[player.position]) {
+        let to = ladders[player.position];
+        player.setPosition(to);
+        msg += `<br>🪜 Ladder! Climb up to <b>${to}</b>.`;
+    } else if (snakes[player.position]) {
+        let to = snakes[player.position];
+        player.setPosition(to);
+        msg += `<br>🐍 Snake! Slide down to <b>${to}</b>.`;
+    }
+
+    updatePlayerToken();
+
+    if (player.position === 100) {
+        msg += `<br><b>🎉 Congratulations! You win!</b>`;
+        rollDiceButton.disabled = true;
+    }
+
+    updateStatus(msg);
 });
 
+// Initial position
+updatePlayerToken();
+updateStatus("Roll the dice to start!");

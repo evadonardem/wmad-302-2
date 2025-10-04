@@ -1,55 +1,140 @@
+const snakes = {
+  27: 5,
+  40: 3,
+  43: 18,
+  54: 31,
+  66: 45,
+  89: 53,
+  95: 77,
+  99: 41
+};
+
+const ladders = {
+  4: 25,
+  13: 46,
+  42: 63,
+  50: 69,
+  62: 81,
+  74: 92
+};
+
 class Die {
+  constructor(sides = 6) {
+    this.sides = sides;
+    this.lastRoll = null;
+  }
 
-    static #sidesToIcon = {
-        1: 'dice-one',
-        2: 'dice-two',
-        3: 'dice-three',
-        4: 'dice-four',
-        5: 'dice-five',
-        6: 'dice-six', 
-    };
+  roll() {
+    this.lastRoll = Math.floor(Math.random() * this.sides) + 1;
+    return this.lastRoll;
+  }
 
-    /**
-     * Complete the Die class to meet the following requirements:
-     * 
-     * 1. The constructor should accept a single parameter, sides, which represents the number of sides on the die (by default 6).
-     * 2. The class should have a method named roll that returns a random integer between 1 and the number of sides (inclusive).
-     * 3. The class should hava a method getting icon that returns a string representing a die icon using font-awesome.
-     *    - For example, if the die has 6 sides, the method should return '<i class="fa fa-dice-six"></i>'.
-     *    - If the die has 4 sides, it should return '<i class="fa fa-dice-four"></i>', and so on.
-     * 
-     * Example usage:
-     * const die = new Die(6);
-     */
+  getDisplay() {
+    return `You rolled: ${this.lastRoll}`;
+  }
 }
 
 class Player {
-    /**
-     * Complete the Player class to meet the following requirements:
-     * 
-     * 1. The constructor should accept a single parameter, name, which represents the player's name.
-     * 2. The class should have a property named color that is initialized to a random color from the following array: ['red', 'blue', 'green', 'yellow'].
-     * 2. The class should have a property named position that is initialized to 0.
-     * 3. The class should have a method named move that accepts a single parameter, steps, and updates the player's position by adding the steps to the current position.
-     * 
-     * Example usage:
-     * const player = new Player('Alice');
-     */
-}
+  constructor(name, color) {
+    this.name = name;
+    this.color = color;
+    this.position = 0; // Start at 0
+  }
 
+  move(steps) {
+    if (this.position === 100) return; // Stop if already won
+
+    let newPosition = this.position + steps;
+    if (newPosition > 100) newPosition = 100;
+
+    // Check for ladder
+    if (ladders[newPosition]) {
+      console.log(`Landed on ladder at ${newPosition}, climbing to ${ladders[newPosition]}`);
+      newPosition = ladders[newPosition];
+    }
+    // Check for snake
+    else if (snakes[newPosition]) {
+      console.log(`Landed on snake at ${newPosition}, sliding to ${snakes[newPosition]}`);
+      newPosition = snakes[newPosition];
+    }
+
+    this.position = newPosition;
+
+    // 🎉 Win condition
+    if (this.position === 100) {
+      setTimeout(() => {
+        alert(`🎉✨ Congratulations Dexter! ✨🎉\nYou finally succeeded and reached 100!\nYou've conquered the snakes, climbed every ladder, and claimed victory like a true champion! 🏆💙`);
+      }, 300);
+    }
+  }
+
+  draw(ctx) {
+    const size = 74;
+    const row = Math.floor((this.position - 1) / 10);
+    const col = (row % 2 === 0)
+      ? (this.position - 1) % 10
+      : 9 - ((this.position - 1) % 10);
+    const x = col * size + size / 2;
+    const y = 740 - (row * size + size / 2);
+
+    if (this.position > 0) {
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, 2 * Math.PI);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    }
+  }
+}
 
 const diceElement = document.getElementById('dicePlaceholder');
 const rollDiceButton = document.getElementById('rollDiceButton');
-const dice = new Die(6);
+const dotCanvas = document.getElementById('dotCanvas');
+const dotCtx = dotCanvas.getContext('2d');
+const gameCanvas = document.getElementById('gameCanvas');
+const gameCtx = gameCanvas.getContext('2d');
+
+const dice = new Die();
+const player = new Player("Dexter", "blue");
 
 rollDiceButton.addEventListener('click', () => {
-    /**
-     * Complete the event listener to meet the following requirements:
-     * render the icon of the die in the diceElement when the button is clicked.
-     * Use the getIcon method of the Die class to get the appropriate icon based on the number of sides.
-     * For example, if the die has 6 sides, it should render '<i class="fa fa-dice-six"></i>'.
-     */
-    const icon = 'dice-five';
-    diceElement.innerHTML = `<i class="fa fa-2xl fa-${icon}"></i>`;
+  const roll = dice.roll();
+  diceElement.textContent = dice.getDisplay();
+  player.move(roll);
+  drawPlayer();
+  startDotAnimation();
 });
 
+function drawPlayer() {
+  gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+  player.draw(gameCtx);
+}
+
+let angle = 0;
+let animationId = null;
+
+function drawDots() {
+  dotCtx.clearRect(0, 0, dotCanvas.width, dotCanvas.height);
+  const radius = 360;
+  const centerX = dotCanvas.width / 2;
+  const centerY = dotCanvas.height / 2;
+  const dotCount = 40;
+
+  for (let i = 0; i < dotCount; i++) {
+    const theta = (2 * Math.PI / dotCount) * i + angle;
+    const x = centerX + radius * Math.cos(theta);
+    const y = centerY + radius * Math.sin(theta);
+
+    dotCtx.beginPath();
+    dotCtx.arc(x, y, 5, 0, 2 * Math.PI);
+    dotCtx.fillStyle = 'orange';
+    dotCtx.fill();
+  }
+
+  angle += 0.05;
+  animationId = requestAnimationFrame(drawDots);
+}
+
+function startDotAnimation() {
+  drawDots();
+  setTimeout(() => cancelAnimationFrame(animationId), 2000);
+}

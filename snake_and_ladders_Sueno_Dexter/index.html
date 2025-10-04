@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake and Ladders (Sueno, Dexter)</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <script src="scripts/snake_and_ladders.js" defer></script>
+</head>
+<body>
+  <nav class="navbar bg-dark border-bottom border-body">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="fa fa-xl fa-gamepad"></i> Snake and Ladders Game by Sueno, Dexter</a>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-9 position-relative">
+        <h1>Board</h1>
+        <canvas id="dotCanvas" width="740" height="740"></canvas>
+        <div id="boardPlaceholder">
+          <canvas id="gameCanvas" width="740" height="740"></canvas>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Roll the Dice!</h5>
+            <div id="dicePlaceholder">🎲</div>
+            <hr />
+            <button id="rollDiceButton" class="btn btn-primary">Roll Dice</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

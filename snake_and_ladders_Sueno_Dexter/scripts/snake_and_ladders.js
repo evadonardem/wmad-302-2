@@ -1,140 +1,151 @@
-const snakes = {
-  27: 5,
-  40: 3,
-  43: 18,
-  54: 31,
-  66: 45,
-  89: 53,
-  95: 77,
-  99: 41
-};
-
-const ladders = {
-  4: 25,
-  13: 46,
-  42: 63,
-  50: 69,
-  62: 81,
-  74: 92
-};
-
 class Die {
-  constructor(sides = 6) {
-    this.sides = sides;
-    this.lastRoll = null;
-  }
+    static #sidesToIcon = {
+        1: 'dice-one',
+        2: 'dice-two',
+        3: 'dice-three',
+        4: 'dice-four',
+        5: 'dice-five',
+        6: 'dice-six',
+    };
 
-  roll() {
-    this.lastRoll = Math.floor(Math.random() * this.sides) + 1;
-    return this.lastRoll;
-  }
+    constructor(sides = 6) {
+        this.sides = sides;
+        this.value = 1;
+    }
 
-  getDisplay() {
-    return `You rolled: ${this.lastRoll}`;
-  }
+    roll() {
+        this.value = Math.floor(Math.random() * this.sides) + 1;
+        return this.value;
+    }
+
+    getIcon() {
+        const icon = Die.#sidesToIcon[this.value] || 'dice-one';
+        return `<i class="fa fa-2xl fa-${icon}"></i>`;
+    }
 }
 
 class Player {
-  constructor(name, color) {
-    this.name = name;
-    this.color = color;
-    this.position = 0; // Start at 0
-  }
-
-  move(steps) {
-    if (this.position === 100) return; // Stop if already won
-
-    let newPosition = this.position + steps;
-    if (newPosition > 100) newPosition = 100;
-
-    // Check for ladder
-    if (ladders[newPosition]) {
-      console.log(`Landed on ladder at ${newPosition}, climbing to ${ladders[newPosition]}`);
-      newPosition = ladders[newPosition];
+    constructor(name, color) {
+        this.name = name;
+        this.color = color;
+        this.position = 0;
     }
-    // Check for snake
-    else if (snakes[newPosition]) {
-      console.log(`Landed on snake at ${newPosition}, sliding to ${snakes[newPosition]}`);
-      newPosition = snakes[newPosition];
-    }
+}
 
-    this.position = newPosition;
+// Snakes and ladders logic
+function checkSnakesAndLadders(position) {
+    // Ladders
+    if (position === 4) position = 25;
+    else if (position === 13) position = 46;
+    else if (position === 42) position = 63;
+    else if (position === 50) position = 69;
+    else if (position === 62) position = 81;
+    else if (position === 74) position = 92;
+    // Snakes
+    else if (position === 27) position = 5;
+    else if (position === 40) position = 3;
+    else if (position === 43) position = 18;
+    else if (position === 54) position = 31;
+    else if (position === 66) position = 45;
+    else if (position === 89) position = 53;
+    else if (position === 95) position = 77;
+    else if (position === 99) position = 41;
 
-    // 🎉 Win condition
-    if (this.position === 100) {
-      setTimeout(() => {
-        alert("🎉 Congratulations! You've reached 100 and won the game!");
-      }, 300);
-    }
-  }
-
-  draw(ctx) {
-    const size = 74;
-    const row = Math.floor((this.position - 1) / 10);
-    const col = (row % 2 === 0)
-      ? (this.position - 1) % 10
-      : 9 - ((this.position - 1) % 10);
-    const x = col * size + size / 2;
-    const y = 740 - (row * size + size / 2);
-
-    if (this.position > 0) {
-      ctx.beginPath();
-      ctx.arc(x, y, 10, 0, 2 * Math.PI);
-      ctx.fillStyle = this.color;
-      ctx.fill();
-    }
-  }
+    return position;
 }
 
 const diceElement = document.getElementById('dicePlaceholder');
 const rollDiceButton = document.getElementById('rollDiceButton');
-const dotCanvas = document.getElementById('dotCanvas');
-const dotCtx = dotCanvas.getContext('2d');
-const gameCanvas = document.getElementById('gameCanvas');
-const gameCtx = gameCanvas.getContext('2d');
+const boardCanvas = document.querySelector('#boardPlaceholder canvas');
+const ctx = boardCanvas.getContext('2d');
 
-const dice = new Die();
-const player = new Player("Dexter", "blue");
+const dice = new Die(6);
+const player1 = new Player("Player 1", "red");
+const player2 = new Player("Player 2", "blue");
+let currentPlayer = player1;
+
+function getCoordinates(position) {
+    if (position === 0) return { x: 10, y: 730 };
+    const row = Math.floor((position - 1) / 10);
+    const colInRow = (position - 1) % 10;
+    const size = 74;
+    let col = row % 2 === 0 ? colInRow : 9 - colInRow;
+    return { 
+        x: col * size + size / 2, 
+        y: 740 - (row * size + size / 2) 
+    };
+}
+
+function drawBoard() {
+    ctx.clearRect(0, 0, boardCanvas.width, boardCanvas.height);
+    [player1, player2].forEach(p => {
+        const { x, y } = getCoordinates(p.position);
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, 2 * Math.PI);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+    });
+}
+
+function animateMove(player, target, callback) {
+    const start = getCoordinates(player.position);
+    const end = getCoordinates(target);
+    let step = 0, totalSteps = 20;
+
+    function animate() {
+        step++;
+        const t = step / totalSteps;
+        const x = start.x + (end.x - start.x) * t;
+        const y = start.y + (end.y - start.y) * t;
+
+        drawBoard();
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, 2 * Math.PI);
+        ctx.fillStyle = player.color;
+        ctx.fill();
+        ctx.stroke();
+
+        if (step < totalSteps) {
+            requestAnimationFrame(animate);
+        } else {
+            player.position = target;
+            drawBoard();
+            if (callback) callback();
+        }
+    }
+    animate();
+}
 
 rollDiceButton.addEventListener('click', () => {
-  const roll = dice.roll();
-  diceElement.textContent = dice.getDisplay();
-  player.move(roll);
-  drawPlayer();
-  startDotAnimation();
+    const steps = dice.roll();
+    diceElement.innerHTML = dice.getIcon();
+
+    let target = Math.min(100, currentPlayer.position + steps);
+    animateMove(currentPlayer, target, () => {
+        let newPosition = checkSnakesAndLadders(currentPlayer.position);
+        if (newPosition !== currentPlayer.position) {
+            animateMove(currentPlayer, newPosition, () => {
+                checkWin();
+                switchTurn();
+            });
+        } else {
+            checkWin();
+            switchTurn();
+        }
+    });
 });
 
-function drawPlayer() {
-  gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-  player.draw(gameCtx);
+function checkWin() {
+    if (currentPlayer.position === 100) {
+        setTimeout(() => alert(`${currentPlayer.name} wins! 🎉`), 300);
+        rollDiceButton.disabled = true;
+    }
 }
 
-let angle = 0;
-let animationId = null;
-
-function drawDots() {
-  dotCtx.clearRect(0, 0, dotCanvas.width, dotCanvas.height);
-  const radius = 360;
-  const centerX = dotCanvas.width / 2;
-  const centerY = dotCanvas.height / 2;
-  const dotCount = 40;
-
-  for (let i = 0; i < dotCount; i++) {
-    const theta = (2 * Math.PI / dotCount) * i + angle;
-    const x = centerX + radius * Math.cos(theta);
-    const y = centerY + radius * Math.sin(theta);
-
-    dotCtx.beginPath();
-    dotCtx.arc(x, y, 5, 0, 2 * Math.PI);
-    dotCtx.fillStyle = 'orange';
-    dotCtx.fill();
-  }
-
-  angle += 0.05;
-  animationId = requestAnimationFrame(drawDots);
+function switchTurn() {
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
 }
 
-function startDotAnimation() {
-  drawDots();
-  setTimeout(() => cancelAnimationFrame(animationId), 2000);
-}
+drawBoard();

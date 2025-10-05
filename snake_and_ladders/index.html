@@ -2,78 +2,104 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake and Ladders (LastName, FirstName)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake and Ladders (Canuto, Che Che)</title>
 
-    <!-- Load Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-        crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+  <!-- Load Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
 
-    <!-- Load FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Load FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Load Snake and Ladders Funcationality -->
-    <script src="scripts/snake_and_ladders.js" defer></script>
+  <!-- Load Snake and Ladders Functionality -->
+  <script src="scripts/snake_and_ladders.js" defer></script>
 
-    <style>
-        #boardPlaceholder {
-            background-image: url('images/board.jpg');
-            background-size: cover;
-            position: relative;
-            width: 740px;
-            height: 740px;
-        }
-    </style>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    #boardPlaceholder {
+      background-image: url('images/board.jpg');
+      background-size: cover;
+      position: relative;
+      width: 740px;
+      height: 740px;
+      border: 3px solid #343a40;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .dice-card {
+      width: 100%;
+      max-width: 18rem;
+      margin: auto;
+      top: 50%;
+      transform: translateY(50%);
+      position: relative;
+    }
+
+    .card-body {
+      text-align: center;
+    }
+
+    #dicePlaceholder {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    h1 {
+      font-weight: 700;
+      color: #343a40;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 
 <body>
-    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fa fa-xl fa-gamepad"></i>
-                Snake and Ladders Game by LastName, FirstName
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-9">
-                <h1>Board</h1>
-                <div id="boardPlaceholder">
-                    <canvas width="740" height="740"></canvas>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Roll the Dice!</h5>
-                        <div id="dicePlaceholder"></div>
-                        <hr>
-                        <button id="rollDiceButton" class="btn btn-primary">Roll Dice</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- Navbar -->
+  <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="fa fa-xl fa-gamepad me-2"></i>
+        Snake and Ladders Game by Canuto, Che Che
+      </a>
     </div>
+  </nav>
 
+  <!-- Main Layout -->
+  <div class="container mt-4">
+    <div class="row align-items-center">
+      <!-- Board Section -->
+      <div class="col-md-8 d-flex justify-content-center mb-4 mb-md-0">
+        <div>
+          <h1 class="text-center mb-3">Board</h1>
+          <div id="boardPlaceholder">
+            <canvas width="740" height="740"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dice Section -->
+      <div class="col-md-4 d-flex justify-content-center">
+        <div class="card dice-card shadow">
+          <div class="card-body">
+            <h5 class="card-title mb-3">🎲 Roll the Dice!</h5>
+            <div id="dicePlaceholder">🎲</div>
+            <hr>
+            <button id="rollDiceButton" class="btn btn-primary w-100">Roll Dice</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

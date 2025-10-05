@@ -118,11 +118,11 @@ function animateMove(player, target, callback) {
     animate();
 }
 
-// 🎲 Roll Dice and Change Color Based on Player Turn
+
 rollDiceButton.addEventListener('click', () => {
     const steps = dice.roll();
 
-    // Change dice color based on current player's color
+   
     const playerColor = currentPlayer.color;
     diceElement.innerHTML = `<span style="color: ${playerColor};">${dice.getIcon()}</span>`;
 

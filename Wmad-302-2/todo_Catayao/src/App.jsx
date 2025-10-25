@@ -8,81 +8,76 @@ function App() {
 
   // Add a new task
   const handleAddTodo = (task) => {
+    if (task.trim() === "") return;
     setTodos([...todos, { text: task, completed: false }]);
   };
 
   // Delete a task
   const handleDeleteTodo = (index) => {
-    const updatedTodos = todos.filter((_, i) => i !== index);
-    setTodos(updatedTodos);
+    setTodos(todos.filter((_, i) => i !== index));
   };
 
   // Toggle completed
   const handleToggleComplete = (index) => {
-    const updatedTodos = [...todos];
-    updatedTodos[index].completed = !updatedTodos[index].completed;
-    setTodos(updatedTodos);
+    const updated = [...todos];
+    updated[index].completed = !updated[index].completed;
+    setTodos(updated);
   };
 
   return (
-    <>
-      <Container
+    <Container
+      fluid
+      className="d-flex align-items-center justify-content-center min-vh-100"
+      style={{
+        background: "linear-gradient(135deg, #89f7fe, #66a6ff)",
+        fontFamily: "'Poppins', sans-serif",
+        padding: "20px",
+      }}
+    >
+      <Card
+        className="shadow-lg border-0"
         style={{
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "center",
-          height: "100vh",
-          background: "linear-gradient(135deg, #a8edea, #fed6e3)",
-          fontFamily: "'Poppins', sans-serif",
-          padding: "20px",
+          width: "90%",
+          maxWidth: "600px",
+          borderRadius: "18px",
+          background: "linear-gradient(135deg, #ffffff, #f8f9ff)",
+          overflow: "hidden",
+          transition: "transform 0.25s ease, box-shadow 0.25s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-6px)";
+          e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.15)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 4px 15px rgba(0,0,0,0.1)";
         }}
       >
-        <Card
-          style={{
-            flex: 1,
-            width: "80%",
-            maxWidth: "600px",
-            backgroundColor: "#fff",
-            borderRadius: "16px",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-6px)";
-            e.currentTarget.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.2)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
-          }}
-        >
-          <Card.Body>
-            <Card.Title
-              className="text-center mb-4"
-              style={{
-                fontSize: "2rem",
-                fontWeight: "700",
-                color: "#333",
-              }}
-            >
-              🌤️ My Tasks for the Day
-            </Card.Title>
+        <Card.Body>
+          <Card.Title
+            className="text-center mb-4"
+            style={{
+              fontSize: "2rem",
+              fontWeight: "700",
+              color: "#333",
+            }}
+          >
+            <i className="fas fa-list-check me-2 text-primary"></i>
+            My Daily Checklist
+          </Card.Title>
 
-            <hr />
+          <TodoList
+            todos={todos}
+            onDelete={handleDeleteTodo}
+            onToggle={handleToggleComplete}
+          />
 
-            <TodoList
-              todos={todos}
-              onDelete={handleDeleteTodo}
-              onToggle={handleToggleComplete}
-            />
+          <hr />
 
-            <hr />
-
-            <TodoForm onAdd={handleAddTodo} />
-          </Card.Body>
-        </Card>
-      </Container>
-    </>
+          <TodoForm onAdd={handleAddTodo} />
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
 

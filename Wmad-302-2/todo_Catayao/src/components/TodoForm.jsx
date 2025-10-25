@@ -22,13 +22,8 @@ function TodoForm({ onAdd }) {
           style={{
             borderRadius: "30px 0 0 30px",
             padding: "12px 20px",
-            border: "2px solid #d1d9e6",
             fontSize: "1rem",
-            outline: "none",
-            transition: "border 0.3s ease",
           }}
-          onFocus={(e) => (e.target.style.border = "2px solid #a8c0ff")}
-          onBlur={(e) => (e.target.style.border = "2px solid #d1d9e6")}
         />
         <Button
           type="submit"
@@ -37,11 +32,11 @@ function TodoForm({ onAdd }) {
             borderRadius: "0 30px 30px 0",
             padding: "12px 25px",
             fontWeight: "600",
-            background: "linear-gradient(135deg, #a8c0ff, #3f2b96)",
+            background: "linear-gradient(135deg, #6a11cb, #2575fc)",
             border: "none",
           }}
         >
-          Add
+          <i className="fas fa-plus"></i>
         </Button>
       </InputGroup>
     </Form>

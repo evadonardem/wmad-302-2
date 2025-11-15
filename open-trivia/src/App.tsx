@@ -16,7 +16,8 @@ import {
   SidebarTrigger
 } from './components/ui/sidebar';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Spinner } from './components/ui/spinner';
 
 const ApplicationSidebarGroup = () => {
   const menuItems = [
@@ -79,15 +80,21 @@ const SettingsSidebarGroup = () => {
 };
 
 function App() {
+  const [triviaQuestions, setTriviaQuestions] = useState([]);
+  const [isLoadingTriviaQuestions, setIsLoadingTriviaQuestions] = useState(true); 
 
-
-  const fetchTriviaQuestions = async () => {
-    const endpoint = "https://opentdb.com/api.php?amount=10&difficulty=hard&category=11";
-    try {
-      const questions = await axios.get(endpoint);
-      console.log(questions);
-    } catch {
-      console.log("error");
+  const fetchTriviaQuestions = async (numberOfQuestions = 10, type = 'multiple', difficulty = null, category = null) => {
+    const endpoint = `https://opentdb.com/api.php?amount=${numberOfQuestions}&type=${type}`;
+    const requestParams = `${difficulty ? `&diffulty=${difficulty}` : ''}${category ? `&category=${category}` : ''}`;
+    const result = await axios.get(`${endpoint}${requestParams}`);
+    
+    // checking the status header is successful
+    if (result.status === 200) {
+      // fetching and mapping received data
+      const { data } = result;
+      const { results: questions } = data;
+      setTriviaQuestions(questions);
+      setIsLoadingTriviaQuestions(false);
     }
   };
 
@@ -95,12 +102,10 @@ function App() {
   useEffect(() => {
     
     (async () => {
-      fetchTriviaQuestions();
+      fetchTriviaQuestions(50);
     })();
 
   }, []);
-
-
 
   return (
     <SidebarProvider>
@@ -128,6 +133,31 @@ function App() {
 
       <main>
         <SidebarTrigger />
+
+        {isLoadingTriviaQuestions && <Spinner />}
+
+        {
+          !isLoadingTriviaQuestions && triviaQuestions.map((item) => {
+            const { question, category, difficulty, correct_answer, incorrect_answers } = item;
+            const options = [...incorrect_answers, correct_answer];
+            
+            
+            return <>
+              <div dangerouslySetInnerHTML={{ __html: question }}></div>
+              <p>{category}</p>
+              <p>{difficulty}</p>
+
+              {options.map((option, index)=> <>
+                <p>Option {index + 1}:</p>
+                <div dangerouslySetInnerHTML={{ __html: option }}></div>
+              </>)}
+
+              <Separator />
+            </>;
+          })
+        }
+
+
       </main>
 
     </SidebarProvider>

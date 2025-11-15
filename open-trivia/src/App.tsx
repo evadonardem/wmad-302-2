@@ -15,6 +15,8 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from './components/ui/sidebar';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const ApplicationSidebarGroup = () => {
   const menuItems = [
@@ -77,6 +79,29 @@ const SettingsSidebarGroup = () => {
 };
 
 function App() {
+
+
+  const fetchTriviaQuestions = async () => {
+    const endpoint = "https://opentdb.com/api.php?amount=10&difficulty=hard&category=11";
+    try {
+      const questions = await axios.get(endpoint);
+      console.log(questions);
+    } catch {
+      console.log("error");
+    }
+  };
+
+
+  useEffect(() => {
+    
+    (async () => {
+      fetchTriviaQuestions();
+    })();
+
+  }, []);
+
+
+
   return (
     <SidebarProvider>
       <Sidebar>

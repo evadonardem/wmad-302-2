@@ -17,21 +17,27 @@ import {
 } from './components/ui/sidebar';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Spinner } from './components/ui/spinner';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import Categories from './pages/Categories';
+import Favorites from './pages/Favorites';
 
 const ApplicationSidebarGroup = () => {
   const menuItems = [
     {
       title: "Home",
       icon: Home,
+      url: '/',
     },
     {
       title: "Categories",
       icon: List,
+      url: '/categories'
     },
     {
       title: "Favorites",
       icon: Star,
+      url: 'favorites'
     },
   ];
 
@@ -41,7 +47,7 @@ const ApplicationSidebarGroup = () => {
       <SidebarMenu>
         {menuItems.map((item) => <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <a href='#'>
+              <a href={item.url}>
                 <item.icon />
                 <span>{item.title}</span>
               </a>
@@ -108,59 +114,68 @@ function App() {
   }, []);
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-            Open Trivia
-          </h1>
-          <p className="text-muted-foreground text-xl">
-            For every <em>Juan</em>
-          </p>
-          <Separator/>
-        </SidebarHeader>
-        <SidebarContent>
-          <ApplicationSidebarGroup />
-          <SettingsSidebarGroup />
-        </SidebarContent>
-        <SidebarFooter>
-          <p className="text-muted-foreground text-sm">
-            WMAD-302 Group ? <br/>
-            &copy; 2025
-          </p>
-        </SidebarFooter>
-      </Sidebar>
+    <BrowserRouter>
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader>
+            <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+              Open Trivia
+            </h1>
+            <p className="text-muted-foreground text-xl">
+              For every <em>Juan</em>
+            </p>
+            <Separator/>
+          </SidebarHeader>
+          <SidebarContent>
+            <ApplicationSidebarGroup />
+            <SettingsSidebarGroup />
+          </SidebarContent>
+          <SidebarFooter>
+            <p className="text-muted-foreground text-sm">
+              WMAD-302 Group ? <br/>
+              &copy; 2025
+            </p>
+          </SidebarFooter>
+        </Sidebar>
 
-      <main>
-        <SidebarTrigger />
-
-        {isLoadingTriviaQuestions && <Spinner />}
-
-        {
-          !isLoadingTriviaQuestions && triviaQuestions.map((item) => {
-            const { question, category, difficulty, correct_answer, incorrect_answers } = item;
-            const options = [...incorrect_answers, correct_answer];
-            
-            
-            return <>
-              <div dangerouslySetInnerHTML={{ __html: question }}></div>
-              <p>{category}</p>
-              <p>{difficulty}</p>
-
-              {options.map((option, index)=> <>
-                <p>Option {index + 1}:</p>
-                <div dangerouslySetInnerHTML={{ __html: option }}></div>
-              </>)}
-
-              <Separator />
-            </>;
-          })
-        }
+        <main>
+          <SidebarTrigger />
+          
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/favorites" element={<Favorites />} />
+          </Routes>
 
 
-      </main>
+          {/* {isLoadingTriviaQuestions && <Spinner />}
 
-    </SidebarProvider>
+          {
+            !isLoadingTriviaQuestions && triviaQuestions.map((item) => {
+              const { question, category, difficulty, correct_answer, incorrect_answers } = item;
+              const options = [...incorrect_answers, correct_answer];
+              
+              
+              return <>
+                <div dangerouslySetInnerHTML={{ __html: question }}></div>
+                <p>{category}</p>
+                <p>{difficulty}</p>
+
+                {options.map((option, index)=> <>
+                  <p>Option {index + 1}:</p>
+                  <div dangerouslySetInnerHTML={{ __html: option }}></div>
+                </>)}
+
+                <Separator />
+              </>;
+            })
+          } */}
+
+
+        </main>
+
+      </SidebarProvider>
+    </BrowserRouter>
   )
 }
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My BINGO Game (Bankin, Ivan)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"
+        integrity="sha512-7XOK7QcGZ7SxvZl0yLMoOcmNmOANHw13V7htE/fQZLTHIXOvwqfHVcT/95A9eCwAJqNTrc5SWv6u9mLprAAObA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+        integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: linear-gradient(120deg, #2b5876, #4e4376);
+            min-height: 100vh;
+            color: white;
+        }
+        table {
+            background-color: white !important;
+        }
+        .badge {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        <h1 class="text-center mb-4">🎉 My Custom BINGO Game 🎉</h1>
+        <div class="row">
+            <!-- Cards Section -->
+            <div class="col-md-8">
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="numberOfCards" min="1" max="10">
+                    <label for="numberOfCards">Number of Cards</label>
+                </div>
+                <div id="cardsPlaceholder"></div>
+            </div>
+
+            <!-- Controls + Results -->
+            <div class="col-md-4">
+                <div class="d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-primary flex-fill" id="roll">Roll</button>
+                    <button type="button" class="btn btn-success flex-fill" id="draw">Draw</button>
+                </div>
+
+                <div class="card text-dark mb-3">
+                    <div class="card-header">Drawn Balls</div>
+                    <div class="card-body">
+                        <div id="drawnBallsPlaceholder" class="d-flex flex-wrap gap-1"></div>
+                    </div>
+                </div>
+
+                <div class="card text-dark">
+                    <div class="card-header">Lucky Card Patterns</div>
+                    <div class="card-body" id="luckyCardsPlaceholder"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="scripts/bingo.js"></script>
+</body>
+
+</html>

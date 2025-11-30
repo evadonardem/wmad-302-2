@@ -12,7 +12,11 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
 
     /* Linting */
     "strict": true,
@@ -22,5 +26,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "vite-plugin-meta-images.ts"]
 }

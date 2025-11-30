@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -31,11 +31,16 @@ interface TriviaQuestion {
 type Difficulty = 'any' | 'easy' | 'medium' | 'hard';
 type QuestionType = 'any' | 'multiple' | 'boolean';
 
+const DAILY_CHALLENGE_SECONDS = 90; // 1.5 minutes to answer the daily challenge
+
 export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [favoriteCategories, setFavoriteCategories] = useState<number[]>([]);
+  const [isDailyMode, setIsDailyMode] = useState(false);
+  const [dailyTimeLeft, setDailyTimeLeft] = useState<number | null>(null);
+  const [quizFinished, setQuizFinished] = useState(false);
   
   // Quiz Configuration State
   const [difficulty, setDifficulty] = useState<Difficulty>('any');
@@ -85,15 +90,16 @@ export default function Categories() {
         const daily = params.get('daily');
         const catId = params.get('cat');
 
+        if (daily === 'true') {
+          setIsDailyMode(true);
+        }
+
         if (catId) {
           const cat = response.data.trivia_categories.find((c: any) => c.id === parseInt(catId));
           if (cat) {
             setSelectedCategory(cat);
             setView('config');
-            // If daily is requested, optionally auto-start quiz
-            if (daily === 'true') {
-              // handleStartQuiz();
-            }
+            // user will manually start the quiz; timer activates once quiz view loads
           }
         }
 
@@ -131,17 +137,46 @@ export default function Categories() {
   };
 
   // Watch for quiz completion
+  const finalizeQuiz = useCallback(() => {
+    if (quizFinished) return;
+    setQuizFinished(true);
+    setShowScoreModal(true);
+    if (selectedCategory) {
+      saveHistory(selectedCategory.name, score, questions.length);
+    }
+  }, [quizFinished, selectedCategory, score, questions.length]);
+
   useEffect(() => {
+    if (quizFinished) return;
     if (questions.length > 0 && answeredCount === questions.length) {
       const timer = setTimeout(() => {
-        setShowScoreModal(true);
-        if (selectedCategory) {
-            saveHistory(selectedCategory.name, score, questions.length);
-        }
-      }, 1000);
+        finalizeQuiz();
+      }, 500);
       return () => clearTimeout(timer);
     }
-  }, [answeredCount, questions.length, selectedCategory, score]);
+  }, [answeredCount, questions.length, finalizeQuiz, quizFinished]);
+
+  useEffect(() => {
+    if (!isDailyMode || view !== 'quiz' || quizFinished) return;
+    if (dailyTimeLeft === 0) {
+      finalizeQuiz();
+    }
+  }, [dailyTimeLeft, isDailyMode, view, quizFinished, finalizeQuiz]);
+
+  useEffect(() => {
+    if (!isDailyMode || view !== 'quiz' || quizFinished) {
+      return;
+    }
+    setDailyTimeLeft((prev) => (prev === null ? DAILY_CHALLENGE_SECONDS : prev));
+    const interval = window.setInterval(() => {
+      setDailyTimeLeft((prev) => {
+        if (prev === null) return prev;
+        return prev <= 1 ? 0 : prev - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(interval);
+  }, [isDailyMode, view, quizFinished]);
+
 
   const handleStartQuiz = async () => {
     if (!selectedCategory) return;
@@ -151,6 +186,8 @@ export default function Categories() {
     setScore(0);
     setAnsweredCount(0);
     setShowScoreModal(false);
+    setQuizFinished(false);
+    setDailyTimeLeft(isDailyMode ? DAILY_CHALLENGE_SECONDS : null);
 
     try {
       let url = `https://opentdb.com/api.php?amount=${amount}&category=${selectedCategory.id}`;
@@ -199,12 +236,15 @@ export default function Categories() {
     setSelectedCategory(null);
     setView('list');
     setQuestions([]);
+    setDailyTimeLeft(null);
   };
 
   const handleBackToConfig = () => {
     setView('config');
     setQuestions([]);
     setShowScoreModal(false);
+    setQuizFinished(false);
+    setDailyTimeLeft(isDailyMode ? DAILY_CHALLENGE_SECONDS : null);
   };
 
   // Animation variants
@@ -401,6 +441,12 @@ export default function Categories() {
                 <span className="text-sm font-medium text-muted-foreground block">Score</span>
                 <span className="text-xl font-bold text-primary">{score} / {questions.length}</span>
               </div>
+              {isDailyMode && (
+                <div className="text-right ml-4">
+                  <span className="text-sm font-medium text-muted-foreground block">Time Left</span>
+                  <span className={cn("text-xl font-mono", (dailyTimeLeft ?? 0) <= 10 ? "text-red-500" : "text-primary")}>{formatSeconds(dailyTimeLeft)}</span>
+                </div>
+              )}
             </div>
 
             {questions.length === 0 ? (
@@ -420,6 +466,7 @@ export default function Categories() {
                     question={q} 
                     index={idx} 
                     onAnswer={handleAnswer}
+                    disabled={isDailyMode && (dailyTimeLeft === 0)}
                   />
                 ))}
               </div>
@@ -455,7 +502,7 @@ export default function Categories() {
   );
 }
 
-function TriviaCard({ question, index, onAnswer }: { question: TriviaQuestion; index: number, onAnswer: (isCorrect: boolean) => void }) {
+function TriviaCard({ question, index, onAnswer, disabled = false }: { question: TriviaQuestion; index: number, onAnswer: (isCorrect: boolean) => void, disabled?: boolean }) {
   const [answered, setAnswered] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -490,7 +537,7 @@ function TriviaCard({ question, index, onAnswer }: { question: TriviaQuestion; i
   };
 
   const handleSelect = (option: string) => {
-    if (answered) return;
+    if (answered || disabled) return;
     setSelectedOption(option);
     setAnswered(true);
     onAnswer(option === question.correct_answer);
@@ -557,7 +604,7 @@ function TriviaCard({ question, index, onAnswer }: { question: TriviaQuestion; i
                   variant="outline"
                   className={className}
                   onClick={() => handleSelect(option)}
-                  disabled={answered}
+                  disabled={answered || disabled}
                 >
                   <div className="flex items-center w-full gap-3">
                     {question.type !== 'boolean' && (
@@ -581,4 +628,13 @@ function TriviaCard({ question, index, onAnswer }: { question: TriviaQuestion; i
       </Card>
     </motion.div>
   );
+}
+
+function formatSeconds(value: number | null) {
+  if (value === null) return '--:--';
+  const minutes = Math.floor(value / 60)
+    .toString()
+    .padStart(2, '0');
+  const seconds = (value % 60).toString().padStart(2, '0');
+  return `${minutes}:${seconds}`;
 }

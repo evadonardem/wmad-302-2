@@ -205,13 +205,42 @@ interface QuizHistory {
   date: string;
 }
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+const getMsUntilMidnight = () => {
+  const now = new Date();
+  const nextMidnight = new Date(now);
+  nextMidnight.setHours(24, 0, 0, 0);
+  return Math.max(0, nextMidnight.getTime() - now.getTime());
+};
+
+const formatCountdown = (ms: number) => {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600)
+    .toString()
+    .padStart(2, '0');
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+    .toString()
+    .padStart(2, '0');
+  const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+};
+
 export default function Dashboard() {
   const [history, setHistory] = useState<QuizHistory[]>([]);
+  const [timeLeftMs, setTimeLeftMs] = useState(getMsUntilMidnight());
   const [, setLocation] = useLocation();
 
   useEffect(() => {
     const storedHistory = JSON.parse(localStorage.getItem('quiz_history') || '[]');
     setHistory(storedHistory);
+  }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setTimeLeftMs(getMsUntilMidnight());
+    }, 1000);
+    return () => window.clearInterval(interval);
   }, []);
 
   const clearAllHistory = () => {
@@ -233,6 +262,9 @@ export default function Dashboard() {
     const randomCatId = 9; // General Knowledge
     setLocation(`/categories?daily=true&cat=${randomCatId}`);
   };
+
+  const countdownDisplay = formatCountdown(timeLeftMs);
+  const progressRatio = Math.min(1, Math.max(0, (DAY_IN_MS - timeLeftMs) / DAY_IN_MS));
 
   const container = {
     hidden: { opacity: 0 },
@@ -359,6 +391,18 @@ export default function Dashboard() {
                 Today's challenge: <strong>General Knowledge</strong>. <br/>
                 Beat the clock and earn a streak!
               </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>Resets in</span>
+                  <span className="font-mono text-base text-primary">{countdownDisplay}</span>
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-chart-4 transition-all duration-700"
+                    style={{ width: `${(progressRatio * 100).toFixed(2)}%` }}
+                  />
+                </div>
+              </div>
               <Button variant="secondary" className="w-full group" onClick={handleDailyChallenge}>
                 Play Daily 
                 <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>

@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+.bg-app {
+  background: linear-gradient(135deg, #c7d2fe, #f8fafc);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app-card {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 18px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  padding: 8px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  animation: fade 0.3s ease;
+}
+
+.dark-item {
+  background: #222;
+}
+
+.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

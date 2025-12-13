@@ -1,3 +1,36 @@
+# Node modules
+node_modules/
+
+# Vite / build
+.vite/
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*~
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+
+# Windows alternate data streams / Zone.Identifier
+*.Zone.Identifier
+
+# Misc cache
+.cache/
+/.parcel-cache/
 node_modules/
 dist/
 build/

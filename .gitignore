@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+.vite/
+.next/
+.env
+.env.*
+.vscode/
+.idea/
+.DS_Store
+# VS Code local history
+.history/
+
+# Zip backups
+*.zip

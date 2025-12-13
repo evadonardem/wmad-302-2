@@ -1,0 +1,215 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+/* =====================
+   EXISTING ANIMATIONS
+   ===================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseFade {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+/* Smooth page fade */
+.pageFade {
+  animation: fadeUpPage 0.6s ease forwards;
+}
+
+@keyframes fadeUpPage {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Footer fade */
+.footerFade {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: footerFadeUp 0.7s ease forwards;
+}
+
+@keyframes footerFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Footer hover underline */
+.footerLink {
+  position: relative;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.footerLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0%;
+  height: 2px;
+  background-color: #e6ddc4;
+  transition: width 0.25s ease;
+}
+
+.footerLink:hover::after {
+  width: 100%;
+}
+
+/* Glow text */
+.footerBrand {
+  transition: text-shadow 0.3s ease;
+}
+
+.footerBrand:hover {
+  text-shadow: 0 0 10px rgba(230, 221, 196, 0.4);
+}
+
+/* Cart item removal animation */
+.cartItem {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.3s ease;
+}
+
+.cartItem.removing {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+/* Floating success modal */
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadePop {
+  0% { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Total price pulse */
+.totalAnim {
+  animation: totalPulse 0.5s ease-out;
+}
+
+@keyframes totalPulse {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* =============================
+   NEW: QUOTE MARQUEE SECTION
+   ============================= */
+
+/* Quotes rotating every few seconds */
+:root {
+  --quote1: "Designed for everyday elegance.";
+  --quote2: "Crafted with intention.";
+  --quote3: "Style that speaks quietly.";
+  --quote4: "Timeless pieces for modern living.";
+}
+
+/* Text element that rotates quotes */
+.quoteText {
+  display: inline-block;
+  animation: quoteRotate 12s infinite;
+  font-size: 60px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+@keyframes quoteRotate {
+  0%, 20%     { content: var(--quote1); opacity: 1; }
+  25%, 45%    { content: var(--quote2); opacity: 1; }
+  50%, 70%    { content: var(--quote3); opacity: 1; }
+  75%, 100%   { content: var(--quote4); opacity: 1; }
+}
+
+/* Scrolling marquee container */
+.quoteMarquee {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  padding: 25px 0;
+}
+
+/* The moving track */
+.quoteTrack {
+  display: inline-flex;
+  gap: 120px;
+  animation: marqueeScroll 22s linear infinite;
+}
+
+/* Scrolling animation */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Left fade shadow */
+.quoteShadowLeft {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 140px;
+  height: 100%;
+  background: linear-gradient(to right, #e6ddc4, transparent);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Right fade shadow */
+.quoteShadowRight {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 140px;
+  height: 100%;
+  background: linear-gradient(to left, #e6ddc4, transparent);
+  pointer-events: none;
+  z-index: 5;
+}

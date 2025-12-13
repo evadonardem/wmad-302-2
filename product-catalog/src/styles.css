@@ -1,0 +1,54 @@
+:root{
+  --primary: #1565c0;
+  --primary-2: #1e88e5;
+  --accent: #ff6f61;
+  --muted: #9e9e9e;
+  --bg: #1565c0;
+  --card: #ffffff;
+  --text: #ffffff;
+  --text-card: #0f1724;
+}
+
+html,body,#root{
+  height:100%;
+}
+
+body{
+  margin:0;
+  font-family: Inter, Roboto, Arial, sans-serif;
+  background: var(--bg) !important;
+  color: var(--text);
+}
+
+/* Ensure text on white Cards (paper) is dark for readability */
+.MuiPaper-root, .card-bg {
+  color: var(--text-card);
+}
+
+/* Make form inputs readable inside white cards */
+.MuiInputBase-root, .MuiOutlinedInput-input, .MuiInputLabel-root, .MuiFormHelperText-root {
+  color: var(--text-card) !important;
+}
+
+/* Ensure inputs keep readable placeholder color */
+.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline { border-color: rgba(0,0,0,0.06); }
+input::placeholder { color: rgba(15,23,36,0.6); }
+
+.brand {
+  color: var(--primary);
+  font-weight: 900;
+}
+
+.accent-btn {
+  background: linear-gradient(90deg,var(--accent),#ff8a65);
+  color: white;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.card-bg {
+  background: var(--card);
+  border-radius: 12px;
+}

@@ -1,112 +1,143 @@
 import {
-  Alert,
-  Box,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Badge,
   Container,
-  Typography
+  Avatar,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useCart } from "./context/CartContext";
+import { useUser } from "./context/UserContext";
+import { useNotification } from "./context/NotificationContext";
+
+import SideMenu from "./components/SideMenu";
+import CartDrawer from "./components/CartDrawer";
+import Dashboard from "./components/Dashboard";
 import ProductSearch from "./components/ProductSearch";
+import OrdersPage from "./components/OrdersPage";
+import AccountPage from "./components/AccountPage";
+import CategoryPage from "./components/CategoryPage";
+import NotificationMenu from "./components/NotificationMenu";
 
-function App() {
+type Page = "home" | "shop" | "categories" | "orders" | "account";
+
+export default function App() {
+  const { cart } = useCart();
+  const { user } = useUser();
+  const { notifications } = useNotification();
+  const navigate = useNavigate();
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [page, setPage] = useState<Page>("home");
+  const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
+    <>
+      {/* ================= APP BAR ================= */}
+      <AppBar position="fixed">
+        <Toolbar>
+          <IconButton onClick={() => setMenuOpen(true)} color="inherit">
+            <MenuIcon />
+          </IconButton>
 
-      <Alert severity="info" sx={{ mb: 4 }} icon={false}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-          Group Tasks
-        </Typography>
-        <Typography variant="body2" sx={{ mb: 1 }}>
-          Create an intuitive product catalog project (like{' '}
-          <Typography
-            component="a"
-            href="https://www.lazada.com.ph/"
-            target="_blank"
-            rel="noreferrer"
-            sx={{ color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
+          <Typography sx={{ flexGrow: 1 }} fontWeight={900}>
+            ShopEZ
+          </Typography>
+
+          {/* 🔔 NOTIFICATION BELL */}
+          <IconButton
+            color="inherit"
+            onClick={(e) => setNotifAnchor(e.currentTarget)}
           >
-            Lazada
-          </Typography>
-          {' '}or{' '}
-          <Typography
-            component="a"
-            href="https://www.shopee.ph/"
-            target="_blank"
-            rel="noreferrer"
-            sx={{ color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
-          >
-            Shopee
-          </Typography>
-          ).
-        </Typography>
+            <Badge badgeContent={unreadCount} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
 
-        <Box component="ul" sx={{ pl: 2, mb: 1 }}>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Form teams and assign roles</strong>: Decide who will focus on design, data, coding, testing, and presentation.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Plan the catalog together</strong>: Brainstorm categories and subcategories (e.g., fashion, electronics, food) as a group.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Agree on product details</strong>: Standardize what information to show (name, price, image, rating) so everyone follows the same format.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Design the layout collaboratively</strong>: Sketch how the catalog should look on paper or whiteboard before coding.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Divide tasks</strong>: Some members build the navigation and search bar, others work on product cards, while others handle filters or promotions.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Test as a group</strong>: Each member tries the catalog on different devices (phone, laptop) and shares feedback.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Highlight teamwork features</strong>: Add elements like "best seller" badges or "flash sale" banners that make the catalog engaging.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Review and refine together</strong>: Discuss what feels intuitive, what's confusing, and adjust based on group consensus.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Practice presentation</strong>: Prepare to explain the catalog's design choices, teamwork process, and user experience improvements.
-          </Typography>
-          <Typography component="li" variant="body2">
-            <strong>Celebrate collaboration</strong>: Recognize each member's contribution and reflect on what the group learned.
-          </Typography>
-        </Box>
+          <IconButton color="inherit" onClick={() => setCartOpen(true)}>
+            <Badge
+              badgeContent={cart.reduce(
+                (sum, i) => sum + i.quantity,
+                0
+              )}
+              color="error"
+            >
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
 
-        
-        <Typography sx={{ fontWeight: 'bold', mt: 4, mb: 1 }}>
-          Prerequisites for this task:
-        </Typography>
-        <Box component="ul" sx={{ pl: 2, mb: 0 }}>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            Basic understanding of React and Material-UI.
-          </Typography>
-          <Typography component="li" variant="body2">
-            Familiarity with fetching data from APIs using Axios or Fetch API.
-          </Typography>
-        </Box>
+          <IconButton color="inherit" onClick={() => setPage("account")} aria-label="account">
+            <Avatar
+              src={user?.profilePic}
+              sx={{ width: 36, height: 36, border: '2px solid rgba(255,255,255,0.25)', bgcolor: 'background.paper', color: 'text.primary' }}
+            >
+              {user?.name?.slice(0, 1)}
+            </Avatar>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
 
-        <Typography sx={{ fontWeight: 'bold', mt: 4, mb: 1 }}>
-          Dependencies for this task:
-        </Typography>
-        <Box component="ul" sx={{ pl: 2, mb: 0 }}>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            Use <a href="https://dummyjson.com/docs/products" target="_blank" rel="noreferrer">dummyjson.com products API</a>
-            for the dataset.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            Use <a href="https://mui.com/material-ui/all-components/" target="_blank" rel="noreferrer">Material UI components</a> for building the UI.
-          </Typography>
-        </Box>
-      </Alert>
+      <NotificationMenu
+        anchorEl={notifAnchor}
+        open={Boolean(notifAnchor)}
+        onClose={() => setNotifAnchor(null)}
+      />
 
-      <Typography variant="body2" margin="auto" textAlign="center" width="75%" sx={{ mb: 4, fontStyle: 'italic' }}>
-        Review the sample implementation below. Treat it as a reference guide and starting point only.<br/>
-        Feel free to enhance and customize the product catalog to showcase your team's creativity and skills!
-      </Typography>
-      
-      <ProductSearch />
+      {/* ================= SIDE MENU ================= */}
+      <SideMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        navigate={(p) => {
+          setPage(p as Page);
+          navigate("/");
+          setMenuOpen(false);
+        }}
+      />
 
-    </Container>
-  )
+      {/* ================= CART DRAWER ================= */}
+      <CartDrawer
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        goToOrders={() => {
+          setPage("orders");
+          navigate("/orders");
+        }}
+      />
+
+      {/* ================= MAIN CONTENT ================= */}
+      <Container sx={{ mt: 10 }}>
+        {page === "home" && (
+          <Dashboard
+            onStartShopping={() => {
+              setPage("shop");
+              navigate("/shop");
+            }}
+          />
+        )}
+
+        {page === "categories" && (
+          <CategoryPage
+            onSelectCategory={(cat) => {
+              setPage("shop");
+              navigate(`/shop?category=${cat}`);
+            }}
+          />
+        )}
+
+        {page === "shop" && <ProductSearch />}
+        {page === "orders" && <OrdersPage />}
+        {page === "account" && <AccountPage />}
+      </Container>
+    </>
+  );
 }
-
-export default App

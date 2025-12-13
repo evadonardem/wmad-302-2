@@ -1,220 +1,305 @@
-import { useCallback, useEffect, useState, useRef } from "react";
-import { DEFAULT_PAGE, DEFAULT_PER_PAGE } from "../configs/constants";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-    Badge,
-    Box,
-    Card,
-    CardContent,
-    CardMedia,
-    Chip,
-    CircularProgress,
-    Divider,
-    Grid,
-    InputAdornment,
-    Pagination,
-    Paper,
-    Rating,
-    TextField,
-    Tooltip,
-    Typography
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  InputAdornment,
+  Rating,
+  TextField,
+  Typography,
+  Chip,
+  Stack,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import { Class, Discount, Inventory, Reviews, Search, Style } from "@mui/icons-material";
-import { SeachProducts } from "../api/ProductsAPI";
+import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-const usdFormatted = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD'
-});
+import { DEFAULT_PAGE, DEFAULT_PER_PAGE } from "../configs/constants";
+import { SearchProducts } from "../api/ProductsAPI";
+import { useReviews } from "../context/ReviewContext";
 
-const ProductSearch = () => {
+import ProductDetailDialog from "./ProductDetailDialog";
+import ReviewDialog from "./ReviewDialog";
 
-    const [products, setProducts] = useState([]);
+type SortKey = "relevance" | "price_low" | "price_high" | "rating_high";
 
-    const [page, setPage] = useState(DEFAULT_PAGE);
-    const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
-    const [total, setTotal] = useState(0);
-    const [pages, setPages] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+export default function ProductSearch() {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = searchParams.get("category");
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [page, setPage] = useState(DEFAULT_PAGE);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-    const handleSearchProducts = useCallback(async (searchKey: string) => {
-        const { page: updatedPage, perPage: updatePerPage, products, total, lastPage } = await SeachProducts({ searchKey, page, perPage });
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortKey>("relevance");
 
-        setProducts(products);
-        setPage(updatedPage);
-        setTotal(total);
-        setPerPage(updatePerPage);
-        setPages(lastPage);
-        setIsLoading(false);
-    }, [page, perPage]);
+  const [selected, setSelected] = useState<any | null>(null);
+  const [reviewId, setReviewId] = useState<number | null>(null);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setIsLoading(true);
-            await handleSearchProducts(searchTerm);
-        };
-        fetchProducts();
-    }, [searchTerm, page, handleSearchProducts]);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const searchTimeout = useRef<any>(null);
+  const searchRef = useRef<HTMLInputElement | null>(null);
 
-    return (
-        <>
-            <TextField
+  const { reviews } = useReviews();
+
+  /* ================= FETCH PRODUCTS ================= */
+  const fetchProducts = useCallback(
+    async (term: string, p: number) => {
+      if (loading || !hasMore) return;
+      setLoading(true);
+
+      const res = await SearchProducts({
+        searchKey: term,
+        page: p,
+        perPage: DEFAULT_PER_PAGE,
+      });
+
+      setProducts((prev) =>
+        p === 1 ? res.products : [...prev, ...res.products]
+      );
+      setHasMore(p < res.lastPage);
+      setLoading(false);
+    },
+    [loading, hasMore]
+  );
+
+  useEffect(() => {
+    fetchProducts(search, page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  // When category filters change, reset the listing and refetch
+  useEffect(() => {
+    setSearch("");
+    setProducts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchProducts("", 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]);
+
+  /* ================= INFINITE SCROLL ================= */
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        setPage((p) => p + 1);
+      }
+    });
+
+    if (loadMoreRef.current) observer.current.observe(loadMoreRef.current);
+    return () => observer.current?.disconnect();
+  }, [hasMore, loading]);
+
+  /* ================= SEARCH ================= */
+  const handleSearch = (value: string) => {
+    setSearch(value);
+
+    if (category && value.trim()) {
+      setSearchParams({});
+    }
+
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+    searchTimeout.current = setTimeout(() => {
+      setProducts([]);
+      setPage(1);
+      setHasMore(true);
+      fetchProducts(value, 1);
+    }, 400);
+  };
+
+  /* ================= FILTER + SORT ================= */
+  const filteredProducts = useMemo(() => {
+    const list = category
+      ? products.filter((p) => {
+          const cats = category.split(",").map((c) => c.trim().toLowerCase());
+          const pc = (p.category || "").toString().trim().toLowerCase();
+          return cats.includes(pc);
+        })
+      : products;
+
+    const withRatings = list.map((p) => {
+      const productReviews = reviews[p.id] || [];
+      const avg =
+        productReviews.reduce((s, r) => s + r.rating, 0) /
+          (productReviews.length || 1) || 0;
+
+      return {
+        ...p,
+        _avg: avg,
+        _reviewCount: productReviews.length,
+      };
+    });
+
+    if (sort === "price_low")
+      return [...withRatings].sort((a, b) => a.price - b.price);
+    if (sort === "price_high")
+      return [...withRatings].sort((a, b) => b.price - a.price);
+    if (sort === "rating_high")
+      return [...withRatings].sort((a, b) => b._avg - a._avg);
+
+    return withRatings;
+  }, [products, category, reviews, sort]);
+
+  return (
+    <>
+      {/* ================= SEARCH HEADER ================= */}
+      <Box sx={{ position: "sticky", top: 88, zIndex: 10, pb: 1 }}>
+        <Card
+          sx={{
+            backgroundColor: "#fff",
+            border: "1px solid rgba(0,0,0,0.15)",
+            borderRadius: 1.5,
+          }}
+        >
+          <CardContent sx={{ py: 1.2, px: 1.5 }}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1}
+              alignItems="center"
+            >
+              {/* SEARCH INPUT */}
+              <TextField
                 fullWidth
-                onChange={(e) => {
-                    const value = e.target.value;
-                    if (debounceTimer.current) {
-                        clearTimeout(debounceTimer.current);
-                    }
-                    debounceTimer.current = setTimeout(() => {
-                        setSearchTerm(value);
-                        setPage(1);
-                    }, 500);
+                placeholder="Search products"
+                value={search}
+                onChange={(e) => handleSearch(e.target.value)}
+                inputRef={(el) => (searchRef.current = el)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ fontSize: 20, color: "#000" }} />
+                    </InputAdornment>
+                  ),
                 }}
-                slotProps={{
-                    input: {
-                        endAdornment: <InputAdornment position="start">
-                            <Search />
-                        </InputAdornment>,
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: 40,
+                    fontSize: 14,
+                    borderRadius: 1,
+                    "& fieldset": {
+                      borderColor: "#000", // 🔴 BLACK EXTERIOR
+                      borderWidth: 1.5,
                     },
+                    "&:hover fieldset": {
+                      borderColor: "#000",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#000",
+                      borderWidth: 2,
+                    },
+                  },
                 }}
-            />
+              />
 
-            {!isLoading
-                ? <>
-                    {pages > 1 && <Box alignContent="center" alignItems="center" display="flex" justifyContent="center" sx={{ my: 2 }}>
-                        <Pagination page={page} count={pages} onChange={(_event, newPage) => setPage(newPage)} />
-                        <Typography variant="caption">({total} items found.)</Typography>
-                    </Box>}
-                    <Grid container spacing={2} sx={{ my: 2 }}>
-                        {products.map(({
-                            id: productId,
-                            category,
-                            description,
-                            discountPercentage,
-                            price,
-                            rating,
-                            reviews,
-                            stock,
-                            tags,
-                            thumbnail,
-                            title,
-                            meta: { qrCode }
-                        }) => (
-                            <Grid key={`product-${productId}`} size={{
-                                xs: 12,
-                                sm: 6,
-                                md: 4,
-                                lg: 3,
-                            }}>
-                                <Card elevation={3} sx={{
-                                    height: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    transition: 'background-color 0.3s ease-in-out',
-                                    '&:hover': {
-                                        backgroundColor: 'secondary.light',
-                                        backShadow: 6,
-                                        transform: 'scale(1.02)',
-                                    },
-                                }}>
-                                    <CardMedia
-                                        image={thumbnail}
-                                        title={title}
-                                        sx={{ height: 300 }}
-                                    />
-                                    <CardContent sx={{ flexGrow: 1, overflow: 'hidden' }}>
-                                        <Tooltip title={title}>
-                                            <Typography gutterBottom variant="h6" component="div" noWrap sx={{ fontWeight: 'bold' }}>
-                                                {title}
-                                            </Typography>
-                                        </Tooltip>
+              {/* SORT SELECT */}
+              <FormControl sx={{ minWidth: 180 }}>
+                <Select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                  sx={{
+                    height: 40,
+                    fontSize: 14,
+                    borderRadius: 1,
+                    "& fieldset": {
+                      borderColor: "#000", // 🔴 BLACK EXTERIOR
+                      borderWidth: 1.5,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#000",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#000",
+                      borderWidth: 2,
+                    },
+                  }}
+                >
+                  <MenuItem value="relevance">Relevance</MenuItem>
+                  <MenuItem value="price_low">Low → High</MenuItem>
+                  <MenuItem value="price_high">High → Low</MenuItem>
+                  <MenuItem value="rating_high">Top Rated</MenuItem>
+                </Select>
+              </FormControl>
+            </Stack>
 
-                                        <Grid container spacing={2}>
-                                            <Grid sx={{ flex: 0.6 }}>
-                                                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                                                    {usdFormatted.format(price - (discountPercentage > 0 ? price * (discountPercentage / 100) : 0))}
-                                                </Typography>
+            {category && (
+              <Box mt={0.8}>
+                <Chip
+                  size="small"
+                  label={`Category: ${category}`}
+                  color="primary"
+                  onDelete={() => setSearchParams({})}
+                />
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
 
+      {/* ================= PRODUCT GRID ================= */}
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Box
+          sx={{
+            display: "grid",
+            gap: 14,
+            maxWidth: 1200,
+            gridTemplateColumns: {
+              xs: "repeat(2, 1fr)",
+              sm: "repeat(3, 1fr)",
+              md: "repeat(4, 1fr)",
+            },
+          }}
+        >
+          {filteredProducts.map((p) => (
+            <Card
+              key={p.id}
+              sx={{ cursor: "pointer" }}
+              onClick={() => setSelected(p)}
+            >
+              <CardMedia component="img" height="170" image={p.thumbnail} />
+              <CardContent>
+                <Typography fontWeight={900} noWrap>
+                  {p.title}
+                </Typography>
+                <Typography color="error">${p.price}</Typography>
+                <Rating value={p._avg} readOnly size="small" />
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      </Box>
 
-                                                {discountPercentage > 0 && <>
-                                                    <Typography color="textDisabled" sx={{ fontWeight: 'bold', textDecoration: 'line-through' }}>
-                                                        {usdFormatted.format(price)}
-                                                    </Typography>
-                                                    <Chip
-                                                        label={`-${discountPercentage}%`}
-                                                        color="error"
-                                                        size="small"
-                                                        icon={<Discount />}
-                                                    />
-                                                </>}
-                                            </Grid>
-                                            <Grid sx={{ flex: 0.4 }}>
-                                                <Paper elevation={1}>
-                                                    <img src={qrCode} width="100%" />
-                                                </Paper>
-                                            </Grid>
-                                        </Grid>
+      {hasMore && (
+        <Box ref={loadMoreRef} display="flex" justifyContent="center" my={3}>
+          <CircularProgress size={28} />
+        </Box>
+      )}
 
-                                        <Divider sx={{ my: 2 }} />
-                                        <Grid container alignItems="center" spacing={2} sx={{ my: 1 }}>
-                                            <Grid>
-                                                <Chip icon={<Class />} label={category} color="secondary" />
-                                            </Grid>
-                                            <Grid>
-                                                <Badge badgeContent={stock || '0'} color={(stock || 0) > 0 ? 'success' : 'error'}>
-                                                    <Inventory color="action" />
-                                                </Badge>
-                                            </Grid>
-                                            <Grid>
-                                                <Tooltip title={(tags as string[] || []).join(', ')} arrow>
-                                                    <Badge badgeContent={(tags as string[] || []).length} color="secondary">
-                                                        <Style color="action" />
-                                                    </Badge>
-                                                </Tooltip>
-                                            </Grid>
-                                        </Grid>
+      {selected && (
+        <ProductDetailDialog
+          product={selected}
+          open
+          onClose={() => setSelected(null)}
+          onWriteReview={(id: number) => setReviewId(id)}
+          goToOrders={() => navigate("/orders")}
+        />
+      )}
 
-                                        <Divider sx={{ my: 2 }} />
-                                        <Tooltip title={description}>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    color: 'text.secondary',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical',
-                                                }}
-                                            >
-                                                {description}
-                                            </Typography>
-                                        </Tooltip>
-                                        <Divider sx={{ my: 2 }} />
-                                        <Tooltip title={`Rating: ${rating || 0}`}>
-                                            <Box display="flex" alignItems="center" gap={1}>
-                                                <Rating value={rating || 0} readOnly precision={0.01} />
-                                                <Badge badgeContent={(reviews as string[] || []).length} color="info">
-                                                    <Reviews color="action" />
-                                                </Badge>
-                                            </Box>
-                                        </Tooltip>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                    {pages > 1 && <Box alignContent="center" alignItems="center" display="flex" justifyContent="center" sx={{ my: 2 }}>
-                        <Pagination page={page} count={pages} onChange={(_event, newPage) => setPage(newPage)} />
-                        <Typography variant="caption">({total} items found.)</Typography>
-                    </Box>}
-                </>
-                : <CircularProgress sx={{ display: 'block', margin: '30vh auto' }} />
-            }
-        </>
-    );
-};
-
-export default ProductSearch;
+      <ReviewDialog
+        productId={reviewId}
+        open={Boolean(reviewId)}
+        onClose={() => setReviewId(null)}
+      />
+    </>
+  );
+}

@@ -1,112 +1,644 @@
-import {
-  Alert,
-  Box,
-  Container,
-  Typography
-} from "@mui/material";
-import ProductSearch from "./components/ProductSearch";
+import { Container, Box, Grid, alpha } from "@mui/material";
+import ProductSearch from './components/ProductSearch';
+import AccountMenu from "./components/AccountMenu";
+import PictureSlide from "./components/PictureSlide";
+import CategoriesGrid from "./components/CategoriesGrid";
+import Footer from "./components/Footer";
+import QuickStatsPanel from "./components/QuickStatPanel";
+import FloatingActionButton from "./components/FloatingActionButton";
+import { initializeStore } from "./store/userStore";
+import { useEffect, useState, useRef, useCallback } from "react";
+import QuickViewModal from "./components/QuickViewModal";
+import { useUserStore } from "./store/userStore";
+import { GetProductDetails } from "./API/ProductsAPI";
+import Typography from "@mui/material/Typography";
+import { motion, AnimatePresence } from 'framer-motion';
+import CartDrawerSimple from './components/SimpleCartDrawer';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import SellerDashboard from "./pages/SellerDashboard";
+import ProductManagement from "./pages/ProductManagement";
+import OrderManagement from "./pages/OrderManagement";
+import MyProfilePage from "./pages/MyProfilePage";
+import ProfileSettingPage from "./pages/ProfileSettingPage";
+import CheckoutPopover from './components/CheckoutPopover'; // ADDED
 
+// Create a separate component for the main app content
+const MainAppContent = () => {
+  const navigate = useNavigate();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
+  const [isLoadingProduct, setIsLoadingProduct] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'popular' | 'new'>('all');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // ADDED: States for CheckoutPopover
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [selectedTotal, setSelectedTotal] = useState(0);
+  const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
+
+  const productsSectionRef = useRef<HTMLDivElement>(null);
+  const categoriesRef = useRef<HTMLDivElement>(null);
+
+  const { addToCart, isLoggedIn, cartCount, currentUser, createOrder, cart, checkoutSelectedItems } = useUserStore();
+
+  // Initialize store and log state
+  useEffect(() => {
+    console.log('🚀 Initializing store...');
+    initializeStore();
+
+    // Log initial store state
+    const state = useUserStore.getState();
+    console.log('📦 Initial store state:', {
+      isLoggedIn: state.isLoggedIn,
+      cartCount: state.cartCount,
+      cartTotal: state.cartTotal,
+      orders: state.orders.length
+    });
+  }, []);
+
+  const handleSearch = useCallback((term: string) => {
+    console.log('🔍 Search triggered:', term);
+    setSearchTerm(term);
+    setSelectedCategory('');
+
+    if (term.trim() && productsSectionRef.current) {
+      setTimeout(() => {
+        productsSectionRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
+    }
+  }, []);
+
+  const handleCategorySelect = useCallback((categorySlug: string) => {
+    console.log('🏷️ Category selected:', categorySlug);
+    setSelectedCategory(categorySlug);
+    setSearchTerm('');
+
+    setTimeout(() => {
+      if (productsSectionRef.current) {
+        productsSectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
+  }, []);
+
+  const handleProductClick = useCallback(async (productId: number) => {
+    console.log('🟢 Product clicked, ID:', productId);
+    setIsLoadingProduct(true);
+
+    try {
+      const productDetails = await GetProductDetails(productId);
+      console.log('✅ Product details loaded:', productDetails.title);
+
+      if (!productDetails.qrCode) {
+        productDetails.qrCode = `QR-${productId}`;
+      }
+
+      setQuickViewProduct(productDetails);
+      setQuickViewOpen(true);
+    } catch (error) {
+      console.error('❌ Error loading product details:', error);
+      showSnackbar('Failed to load product details. Please try again.', 'error');
+    } finally {
+      setIsLoadingProduct(false);
+    }
+  }, []);
+
+  const handleQuickView = useCallback(async (productId: number) => {
+    console.log('🔍 Quick view for product ID:', productId);
+    setIsLoadingProduct(true);
+
+    try {
+      const productDetails = await GetProductDetails(productId);
+      console.log('✅ Quick view product loaded:', productDetails.title);
+
+      if (!productDetails.qrCode) {
+        productDetails.qrCode = `QR-${productId}`;
+      }
+
+      setQuickViewProduct(productDetails);
+      setQuickViewOpen(true);
+    } catch (error) {
+      console.error('❌ Error loading quick view:', error);
+      showSnackbar('Failed to load product details. Please try again.', 'error');
+    } finally {
+      setIsLoadingProduct(false);
+    }
+  }, []);
+
+  const handleCloseQuickView = useCallback(() => {
+    setQuickViewOpen(false);
+    setQuickViewProduct(null);
+  }, []);
+
+  const handleAddToCart = useCallback((product: any) => {
+    console.log('🛒 Adding to cart:', {
+      id: product.id,
+      title: product.title || product.name,
+      price: product.price
+    });
+
+    if (!isLoggedIn) {
+      showSnackbar('Please login to add items to cart', 'warning');
+      return;
+    }
+
+    const productToAdd = {
+      id: product.id || product._id,
+      title: product.title || product.name || 'Unnamed Product',
+      price: product.price || product.currentPrice || 0,
+      discountPercentage: product.discountPercentage || 0,
+      thumbnail: product.thumbnail || product.image || product.images?.[0] || '',
+      category: product.category || '',
+      qrCode: product.qrCode || `QR-${product.id || '0000'}`,
+      description: product.description || '',
+      rating: product.rating || 0,
+      stock: product.stock || 10,
+      tags: product.tags || [],
+      reviews: product.reviews || [],
+      quantity: product.quantity || 1,
+      productId: product.id || product._id,
+      productName: product.title || product.name || 'Unnamed Product',
+      isSelected: true,
+    };
+
+    addToCart(productToAdd, product.quantity || 1);
+
+    const productName = product.title || product.name || 'Product';
+    showSnackbar(`🎉 Added "${productName.substring(0, 20)}..." to cart!`, 'success');
+
+    setTimeout(() => {
+      const state = useUserStore.getState();
+      console.log('🛒 Cart updated:', {
+        cartCount: state.cartCount,
+        cartTotal: state.cartTotal,
+        items: state.cart
+      });
+    }, 100);
+  }, [addToCart, isLoggedIn]);
+
+  // FIXED: Updated handleBuyNow to open CheckoutPopover
+  const handleBuyNow = useCallback((product: any) => {
+    console.log('🚀 Buy Now clicked:', {
+      id: product.id,
+      title: product.title || product.name,
+      price: product.price,
+      quantity: product.quantity || 1
+    });
+
+    if (!isLoggedIn) {
+      showSnackbar('Please login to proceed with purchase', 'warning');
+      return;
+    }
+
+    // Calculate the price with discount if applicable
+    const discountPrice = product.discountPercentage > 0 
+      ? product.price * (1 - (product.discountPercentage || 0) / 100)
+      : product.price;
+
+    // Create the item for checkout
+    const checkoutItem = {
+      id: product.id || product._id || Date.now(),
+      productId: product.id || product._id,
+      productName: product.title || product.name || 'Unnamed Product',
+      quantity: product.quantity || 1,
+      price: discountPrice,
+      originalPrice: product.price || product.currentPrice || 0,
+      discountPercentage: product.discountPercentage || 0,
+      thumbnail: product.thumbnail || product.image || product.images?.[0] || '',
+      category: product.category || '',
+      qrCode: product.qrCode || `QR-${product.id || '0000'}`,
+      description: product.description || '',
+      rating: product.rating || 0,
+      stock: product.stock || 10,
+      tags: product.tags || [],
+      reviews: product.reviews || [],
+      isSelected: true,
+      sellerId: 2 // Default seller ID as per your checkout logic
+    };
+
+    // Set the selected items and total for checkout
+    setSelectedItems([checkoutItem]);
+    setSelectedTotal(discountPrice * (product.quantity || 1));
+    
+    // Open the checkout popover
+    setCheckoutOpen(true);
+    
+    // Close quick view modal
+    setQuickViewOpen(false);
+    
+    showSnackbar('Opening checkout...', 'info');
+  }, [isLoggedIn]);
+
+  const handleCheckoutComplete = useCallback(() => {
+    showSnackbar('🎉 Order placed successfully!', 'success');
+    setPurchaseDialogOpen(true);
+  }, []);
+
+  const handleFilterChange = useCallback((filter: 'all' | 'popular' | 'new') => {
+    console.log('🔘 Filter changed:', filter);
+    setActiveFilter(filter);
+  }, []);
+
+  const showSnackbar = useCallback((message: string, severity: 'success' | 'error' | 'info' | 'warning' = 'success') => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  }, []);
+
+  const handleCloseSnackbar = useCallback(() => {
+    setSnackbarOpen(false);
+  }, []);
+
+  // Handle header scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 50;
+      const header = document.querySelector('.sticky-header');
+      const categories = document.querySelector('.sticky-categories');
+
+      if (scrolled) {
+        header?.classList.add('header-scrolled');
+        categories?.classList.add('header-scrolled');
+      } else {
+        header?.classList.remove('header-scrolled');
+        categories?.classList.remove('header-scrolled');
+      }
+
+      setIsScrolled(scrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleNavigateToSellerDashboard = useCallback(() => {
+    navigate('/seller-dashboard');
+  }, [navigate]);
+
+  return (
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: `linear-gradient(180deg, #0A081F 0%, #1A173B 30%, #2A2660 70%, #3A3485 100%)`,
+        backgroundAttachment: 'fixed',
+        fontFamily: '"Inter", "Roboto", -apple-system, BlinkMacSystemFont, sans-serif',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+            radial-gradient(circle at 20% 80%, ${alpha('#FF6B95', 0.15)} 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, ${alpha('#7877C6', 0.15)} 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, ${alpha('#4ECDC4', 0.1)} 0%, transparent 50%)
+          `,
+          zIndex: 0,
+        }
+      }}
+    >
+      {/* Sticky Header */}
+      <Box
+        className="sticky-header"
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1300,
+          width: '100%',
+          backdropFilter: 'blur(20px)',
+          backgroundColor: alpha('#0A081F', 0.95),
+          borderBottom: '1px solid rgba(120, 119, 198, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+          WebkitBackdropFilter: 'blur(20px)',
+          transition: 'all 0.3s ease',
+          '&.header-scrolled': {
+            py: 1,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+          }
+        }}
+      >
+        <Container
+          maxWidth="xl"
+          sx={{
+            py: 2,
+            width: '100%',
+            maxWidth: 1800,
+            mx: 'auto',
+            px: { xs: 2, sm: 3, md: 4 },
+            transition: 'padding 0.3s ease',
+          }}
+        >
+          <AccountMenu
+            onSearch={handleSearch}
+            scrolled={isScrolled}
+            onNavigateToSellerDashboard={handleNavigateToSellerDashboard}
+          />
+        </Container>
+      </Box>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: { xs: 2, md: 3 },
+          px: { xs: 2, sm: 3, md: 4 },
+          position: 'relative',
+          zIndex: 1,
+          minHeight: 'calc(100vh - 200px)',
+          width: '100%',
+        }}
+      >
+        <Container
+          maxWidth={false}
+          sx={{
+            maxWidth: 1800,
+            mx: 'auto',
+            px: 0,
+            width: '100%',
+          }}
+        >
+          <Grid container spacing={3} sx={{
+            flexWrap: { xs: 'wrap', lg: 'nowrap' },
+            width: '100%',
+            alignItems: 'flex-start',
+            position: 'relative',
+          }}>
+            {/* Left Sidebar - Categories */}
+            <Grid
+              item
+              xs={12}
+              lg={2.5}
+              ref={categoriesRef}
+              className="sticky-categories"
+              sx={{
+                flexShrink: 0,
+                minWidth: { lg: 280 },
+                maxWidth: { lg: 320 },
+                width: { xs: '100%', lg: 'auto' },
+                position: { lg: 'sticky' },
+                top: { lg: 160 },
+                alignSelf: 'flex-start',
+                height: 'fit-content',
+                maxHeight: { lg: 'calc(100vh - 180px)' },
+                overflowY: { lg: 'auto' },
+                zIndex: 100,
+                '&::-webkit-scrollbar': {
+                  width: 6,
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: 3,
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: 'linear-gradient(180deg, #F29F58 0%, #AB4459 100%)',
+                  borderRadius: 3,
+                },
+                '&.header-scrolled': {
+                  top: { lg: 140 },
+                  maxHeight: { lg: 'calc(100vh - 160px)' },
+                },
+                '&::-webkit-scrollbar': {
+                  display: { xs: 'none', lg: 'block' },
+                },
+              }}
+            >
+              <CategoriesGrid onSelectCategory={handleCategorySelect} />
+            </Grid>
+
+            {/* RIGHT COLUMN - MAIN CONTENT */}
+            <Grid item xs={12} lg={9.5} sx={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              width: '100%',
+              pl: { lg: 1 },
+            }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: 1,
+                  minWidth: 0,
+                  width: '100%',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Picture Slide */}
+                <Box sx={{
+                  p: { xs: 2, md: 3 },
+                  pb: 0,
+                  height: 300,
+                  flexShrink: 0,
+                  flex: '0 0 auto',
+                  width: '100%',
+                  minWidth: 0,
+                }}>
+                  <PictureSlide />
+                </Box>
+
+                {/* Stats */}
+                <Box sx={{
+                  mt: 4,
+                  p: { xs: 2, md: 6 },
+                  pt: 2,
+                  flexShrink: 0,
+                  width: '100%',
+                  minWidth: 5,
+                }}>
+                  <QuickStatsPanel />
+                </Box>
+
+                {/* Products Container */}
+                <Box
+                  ref={productsSectionRef}
+                  id="products-section"
+                  sx={{
+                    p: { xs: 2, md: 3 },
+                    pt: 0,
+                    flex: 1,
+                    minHeight: '750px',
+                    width: '100%',
+                    minWidth: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                    scrollMarginTop: '160px',
+                  }}
+                >
+                  <ProductSearch
+                    searchTerm={searchTerm}
+                    category={selectedCategory}
+                    onProductClick={handleProductClick}
+                    onQuickView={handleQuickView}
+                    activeFilter={activeFilter}
+                    onFilterChange={handleFilterChange}
+                  />
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Footer */}
+      <Box sx={{ mt: 'auto', width: '100%' }}>
+        <Footer />
+      </Box>
+
+      {/* Floating Buttons */}
+      <FloatingActionButton />
+
+      {/* Cart Drawer */}
+      <CartDrawerSimple onProductClick={handleQuickView} />
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        open={quickViewOpen}
+        product={quickViewProduct}
+        onClose={handleCloseQuickView}
+        onAddToCart={handleAddToCart}
+        onBuyNow={handleBuyNow}  // This now opens CheckoutPopover
+        isLoggedIn={isLoggedIn}
+      />
+
+      {/* ADDED: Checkout Popover */}
+      <CheckoutPopover
+        isOpen={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        selectedItems={selectedItems}
+        selectedTotal={selectedTotal}
+        onCheckoutComplete={handleCheckoutComplete}
+      />
+
+      {/* Loading Overlay */}
+      <AnimatePresence>
+        {isLoadingProduct && (
+          <Box
+            component={motion.div}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: alpha('#0A081F', 0.9),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              backdropFilter: 'blur(10px)',
+            }}
+          >
+            <Box sx={{ textAlign: 'center' }}>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: '50%',
+                  border: `3px solid ${alpha('#7877C6', 0.2)}`,
+                  borderTopColor: '#7877C6',
+                  margin: '0 auto 20px',
+                }}
+              />
+              <Typography sx={{
+                color: 'white',
+                fontSize: '0.875rem',
+                letterSpacing: '0.1em',
+                fontWeight: 500
+              }}>
+                Loading Luxury Details
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </AnimatePresence>
+
+      {/* MUI Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{
+          bottom: { xs: 100, sm: 120 },
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'auto',
+          minWidth: '300px',
+          maxWidth: '90%',
+        }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{
+            width: '100%',
+            backgroundColor: snackbarSeverity === 'success' ? alpha('#4ECDC4', 0.95) :
+              snackbarSeverity === 'error' ? alpha('#FF6B95', 0.95) :
+                snackbarSeverity === 'warning' ? alpha('#F29F58', 0.95) :
+                  alpha('#7877C6', 0.95),
+            color: 'white',
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${snackbarSeverity === 'success' ? alpha('#4ECDC4', 0.3) :
+              snackbarSeverity === 'error' ? alpha('#FF6B95', 0.3) :
+                snackbarSeverity === 'warning' ? alpha('#F29F58', 0.3) :
+                  alpha('#7877C6', 0.3)}`,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            '& .MuiAlert-icon': {
+              color: 'white',
+            }
+          }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {snackbarMessage}
+          </Typography>
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+};
+
+// Main App Component with Routes
 function App() {
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
+    <Routes>
+      {/* Seller Routes */}
+      <Route path="/seller-dashboard" element={<SellerDashboard />} />
+      <Route path="/seller/products" element={<ProductManagement />} />
+      <Route path="/seller/orders" element={<OrderManagement />} />
 
-      <Alert severity="info" sx={{ mb: 4 }} icon={false}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-          Group Tasks
-        </Typography>
-        <Typography variant="body2" sx={{ mb: 1 }}>
-          Create an intuitive product catalog project (like{' '}
-          <Typography
-            component="a"
-            href="https://www.lazada.com.ph/"
-            target="_blank"
-            rel="noreferrer"
-            sx={{ color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
-          >
-            Lazada
-          </Typography>
-          {' '}or{' '}
-          <Typography
-            component="a"
-            href="https://www.shopee.ph/"
-            target="_blank"
-            rel="noreferrer"
-            sx={{ color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
-          >
-            Shopee
-          </Typography>
-          ).
-        </Typography>
+      {/* Profile Routes */}
+      <Route path="/my-profile" element={<MyProfilePage />} />
+      <Route path="/profile-setting" element={<ProfileSettingPage />} />
 
-        <Box component="ul" sx={{ pl: 2, mb: 1 }}>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Form teams and assign roles</strong>: Decide who will focus on design, data, coding, testing, and presentation.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Plan the catalog together</strong>: Brainstorm categories and subcategories (e.g., fashion, electronics, food) as a group.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Agree on product details</strong>: Standardize what information to show (name, price, image, rating) so everyone follows the same format.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Design the layout collaboratively</strong>: Sketch how the catalog should look on paper or whiteboard before coding.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Divide tasks</strong>: Some members build the navigation and search bar, others work on product cards, while others handle filters or promotions.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Test as a group</strong>: Each member tries the catalog on different devices (phone, laptop) and shares feedback.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Highlight teamwork features</strong>: Add elements like "best seller" badges or "flash sale" banners that make the catalog engaging.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Review and refine together</strong>: Discuss what feels intuitive, what's confusing, and adjust based on group consensus.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Practice presentation</strong>: Prepare to explain the catalog's design choices, teamwork process, and user experience improvements.
-          </Typography>
-          <Typography component="li" variant="body2">
-            <strong>Celebrate collaboration</strong>: Recognize each member's contribution and reflect on what the group learned.
-          </Typography>
-        </Box>
-
-        
-        <Typography sx={{ fontWeight: 'bold', mt: 4, mb: 1 }}>
-          Prerequisites for this task:
-        </Typography>
-        <Box component="ul" sx={{ pl: 2, mb: 0 }}>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            Basic understanding of React and Material-UI.
-          </Typography>
-          <Typography component="li" variant="body2">
-            Familiarity with fetching data from APIs using Axios or Fetch API.
-          </Typography>
-        </Box>
-
-        <Typography sx={{ fontWeight: 'bold', mt: 4, mb: 1 }}>
-          Dependencies for this task:
-        </Typography>
-        <Box component="ul" sx={{ pl: 2, mb: 0 }}>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            Use <a href="https://dummyjson.com/docs/products" target="_blank" rel="noreferrer">dummyjson.com products API</a>
-            for the dataset.
-          </Typography>
-          <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
-            Use <a href="https://mui.com/material-ui/all-components/" target="_blank" rel="noreferrer">Material UI components</a> for building the UI.
-          </Typography>
-        </Box>
-      </Alert>
-
-      <Typography variant="body2" margin="auto" textAlign="center" width="75%" sx={{ mb: 4, fontStyle: 'italic' }}>
-        Review the sample implementation below. Treat it as a reference guide and starting point only.<br/>
-        Feel free to enhance and customize the product catalog to showcase your team's creativity and skills!
-      </Typography>
-      
-      <ProductSearch />
-
-    </Container>
-  )
+      {/* Main App Route */}
+      <Route path="*" element={<MainAppContent />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
